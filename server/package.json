@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "./src/server.ts",
+  "repository": "https://www.github.com/angelopedroso/Stella",
+  "author": "Angelo & Matheus",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup src/server.ts",
+    "dev": "tsx watch src/server.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "@rocketseat/eslint-config": "^2.1.0",
+    "@types/ws": "^8.5.9",
+    "eslint": "^8.53.0",
+    "tsup": "^7.3.0",
+    "tsx": "^4.1.3",
+    "typescript": "^5.2.2"
+  }
+}

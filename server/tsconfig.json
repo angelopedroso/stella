@@ -86,7 +86,6 @@
     "baseUrl": "./src",
     "paths": {
       "@config/*": ["config/*"],
-      "@model/*": ["model/*"],
     }
   }
 }

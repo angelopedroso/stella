@@ -1,16 +1,15 @@
-import Link from 'next/link'
-import { MoveRight } from 'lucide-react'
 import { HomeIcon } from '@/assets/spoken-icon-home'
+import { HomeForm } from '@/components/homeForm/home-form'
 
 export default function Home() {
   return (
     <main className="flex flex-1 flex-col items-center justify-between lg:flex-row">
-      <div className="flex flex-col items-start justify-center gap-4">
+      <div className="flex max-w-4xl flex-col items-start justify-center gap-4">
         <h2 className="text-4xl font-bold md:max-w-4xl md:text-7xl">
           Reveal your Fluency
         </h2>
 
-        <p className="max-w-6xl font-semibold leading-6 text-slate-700 dark:text-slate-300">
+        <p className="font-semibold leading-6 text-slate-700 dark:text-slate-300">
           Explore an innovative space where language barriers dissolve in
           engaging experiences. Here, dive into video chats that transcend
           conventional communication, enhancing your skills in different
@@ -20,14 +19,9 @@ export default function Home() {
           surprising ways.
         </p>
 
-        <Link
-          href="/login"
-          className="flex items-center gap-2 font-semibold text-violet-400 transition-colors hover:text-violet-500 hover:underline"
-        >
-          Begin your journey <MoveRight />
-        </Link>
+        <HomeForm />
       </div>
-      <div className="flex items-center justify-end md:w-full">
+      <div className="flex items-center justify-center lg:min-w-[30rem] lg:justify-end">
         <HomeIcon />
       </div>
     </main>

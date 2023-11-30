@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
+import './globals.scss'
 import { ThemeProvider } from '@/providers/theme.provider'
 import { Header } from '@/components/header/header'
 
@@ -18,10 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} flex h-screen flex-col px-20 py-8`}>
+      <body
+        className={`${inter.className} flex h-screen flex-col px-8 py-4 sm:px-14 sm:py-5 md:px-20 md:py-8`}
+      >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

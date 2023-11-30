@@ -8,17 +8,17 @@ export default function NotFound() {
         <ErrorIcon />
         <div className="-mt-10 flex flex-col items-center justify-center">
           <h1 className="text-center text-lg font-bold text-slate-900 dark:text-slate-300 md:text-2xl">
-            Oops! Parece que você está num lugar desconhecido.
+            Oops! It looks like you are in an unfamiliar place.
           </h1>
           <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 md:text-lg">
-            Dê meia volta e volte para casa!
+            Turn around and go back home!
           </p>
         </div>
         <Link
           href="/"
           className="w-fit rounded-lg bg-violet-500 px-5 py-3 text-slate-100 transition-colors hover:bg-violet-400"
         >
-          Ir para casa
+          Go to home
         </Link>
       </div>
     </main>

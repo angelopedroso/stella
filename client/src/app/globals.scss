@@ -5,6 +5,7 @@
 @layer base {
   :root {
     --background: #e6e8eb;
+    --background-border: #d9dadd;
     --foreground: #030712;
 
     --card: #e6e8eb;
@@ -38,6 +39,7 @@
  
   .dark {
     --background: #030712;
+    --background-border: #060c21;
     --foreground: 210 40% 98%;
  
     --card: #030712;
@@ -103,5 +105,25 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+.menu-flags {
+  ul {
+    background-color: var(--background);
+    color: var(--foreground);
+    border-color: var(--background-border);
+
+    li:hover {
+      background-color: var(--background-border);
+    }
+
+    div {
+      background-color: var(--background);;
+
+      input{
+        background-color: var(--background);;
+      }
+    }
   }
 }

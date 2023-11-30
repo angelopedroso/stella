@@ -11,10 +11,6 @@ export function useDarkMode() {
   }
 
   useEffect(() => {
-    if (theme === 'system') {
-      setChecked(false)
-      return
-    }
     setChecked(theme !== 'dark')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

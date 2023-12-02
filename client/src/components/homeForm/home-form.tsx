@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { useLanguageForm } from './hooks/home-form.hook'
 import { Button } from '../ui/button'
 import { MoveRight } from 'lucide-react'
+import { countries, countriesLabel } from '@/lib/global'
 
 export function HomeForm() {
   const { form, handleFormSubmit } = useLanguageForm()
@@ -25,9 +26,11 @@ export function HomeForm() {
                   <ReactFlagsSelect
                     onSelect={field.onChange}
                     selected={field.value}
-                    placeholder="Select your country"
+                    placeholder="Select your native language"
                     searchable
-                    className="menu-flags w-64"
+                    className="menu-flags w-72"
+                    countries={countries}
+                    customLabels={countriesLabel}
                   />
                 </FormControl>
                 <FormMessage />
@@ -46,6 +49,8 @@ export function HomeForm() {
                     placeholder="Select a language"
                     searchable
                     className="menu-flags w-64"
+                    countries={countries}
+                    customLabels={countriesLabel}
                   />
                 </FormControl>
                 <FormMessage />
@@ -55,7 +60,7 @@ export function HomeForm() {
         </div>
         <Button
           variant="link"
-          className="flex items-center gap-2 p-0 text-base font-semibold text-violet-400 transition-colors hover:text-violet-500 hover:underline"
+          className="flex items-center gap-2 p-0 text-base font-semibold text-primary transition-colors hover:text-primary/80 hover:underline"
           type="submit"
         >
           Begin your journey <MoveRight />

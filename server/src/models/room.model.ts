@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { ObjectId } from 'mongoose'
+import { ObjectId, Types } from 'mongoose'
+import { User } from './user.model'
 
 @Schema()
 export class Room {
@@ -14,8 +15,11 @@ export class Room {
   @Prop({ required: true })
   learn: string
 
-  @Prop({ min: 0, max: 2 })
-  connectedUsers: number
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  connectedUsers: User[]
+
+  @Prop({ required: true, default: 0 })
+  totalUsers: number
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room)

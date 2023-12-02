@@ -7,15 +7,12 @@ export class User {
   _id: ObjectId | string
 
   @Prop({ required: true })
-  clientId: string
-
-  @Prop({ required: true })
   native: string
 
   @Prop({ required: true })
   learn: string
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Room' }], required: true })
+  @Prop({ type: Types.ObjectId, ref: 'Room' })
   room: Room
 }
 

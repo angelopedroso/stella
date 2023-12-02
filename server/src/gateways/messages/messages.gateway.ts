@@ -1,5 +1,6 @@
 import {
   OnGatewayDisconnect,
+  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -9,79 +10,78 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { Room, User } from '@/models'
 import { Message } from '@/@types/message'
+import { RoomService } from '@/services/room/room.service'
+import { UserService } from '@/services/user/user.service'
+import { Logger } from '@nestjs/common'
 
 @WebSocketGateway({ cors: '*' })
-export class MessagesGateway implements OnGatewayDisconnect {
-  clientIds: Map<string, string> = new Map()
+export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
+  private logger: Logger = new Logger('MessagesGateway')
 
   constructor(
     @InjectModel(Room.name) private readonly roomsModel: Model<Room>,
     @InjectModel(User.name) private readonly usersModel: Model<User>,
+    private readonly roomService: RoomService,
+    private readonly userService: UserService,
   ) {}
 
   @WebSocketServer()
   server: Server
 
+  afterInit() {
+    this.logger.log('Initialized')
+  }
+
+  handleConnection(client: Socket) {
+    this.logger.log(`Client connected: ${client.id}`)
+  }
+
   async handleDisconnect(client: Socket) {
+    this.logger.log(`Client disconnected: ${client.id}`)
+
     const user = await this.usersModel.findOne({ clientId: client.id })
 
     if (user) {
+      const roomId = user.room._id
+
       this.server.emit('users-changed', {
-        user: this.clientIds[client.id],
+        user,
         event: 'left',
       })
 
-      await this.usersModel.deleteOne({ _id: user._id })
-    }
-  }
+      const room = await this.roomsModel.findById(roomId).exec()
 
-  @SubscribeMessage('set-clientId')
-  setClientId(client: Socket, clientId: string) {
-    this.clientIds[client.id] = clientId
-    this.server.emit('users-changed', { user: clientId, event: 'joined' })
+      if (room.totalUsers < 2) {
+        await this.roomService.deleteRoom(roomId)
+      } else {
+        await this.roomService.removeUserFromRoom(room, user._id)
+      }
+
+      await this.userService.deleteUser(user._id)
+    }
   }
 
   @SubscribeMessage('enter-chat-room')
   async enterChatRoom(client: Socket, data: Room) {
-    let user = await this.usersModel.findOne({ clientId: client.id })
+    let user = await this.userService.findByClientId(client.id)
 
     if (!user) {
-      user = await this.usersModel.create({
+      user = await this.userService.createUser({
         learn: data.learn,
         native: data.native,
-        clientId: client.id,
-      })
-    } else {
-      user.clientId = client.id
-      user = await this.usersModel.findByIdAndUpdate(user._id, user, {
-        new: true,
       })
     }
 
-    const dataRoom = await this.roomsModel.aggregate<Room>([
-      {
-        $match: {
-          status: 'waiting',
-          connectedUsers: 1,
-          native: user.learn,
-          learn: user.native,
-        },
-      },
-      { $sample: { size: 1 } },
-    ])
+    const dataRoom = await this.roomService.findRandomlyRoom(user)
 
-    if (!dataRoom[0] || dataRoom[0].connectedUsers >= 2) {
-      const data = await this.roomsModel.create({
-        connectedUsers: 1,
-        learn: user.learn,
-        native: user.native,
-        status: 'waiting',
-      })
+    if (!dataRoom || dataRoom.totalUsers > 1) {
+      const data = await this.roomService.createRoom(user)
 
       user.room = data
-      await this.usersModel.findByIdAndUpdate(user._id, user, {
-        new: true,
-      })
+
+      await this.userService.updateUser(user._id, user)
+
+      client.emit('chat-room-entered', data._id.toString())
 
       client.join(data._id.toString())
 
@@ -92,20 +92,18 @@ export class MessagesGateway implements OnGatewayDisconnect {
       return
     }
 
-    user.room = dataRoom[0]
-    await this.usersModel.findByIdAndUpdate(user._id, user, {
-      new: true,
-    })
+    user.room = dataRoom
 
-    this.roomsModel.findByIdAndUpdate(dataRoom[0]._id, {
-      connectedUsers: dataRoom[0].connectedUsers + 1,
-      status: 'call',
-    })
+    user = await this.userService.updateUser(user._id, user)
 
-    client.join(dataRoom[0]._id.toString())
+    await this.roomService.addUserToRoom(dataRoom._id, user._id)
+
+    client.emit('chat-room-entered', dataRoom._id.toString())
+
+    client.join(dataRoom._id.toString())
 
     client.broadcast
-      .to(dataRoom[0]._id.toString())
+      .to(dataRoom._id.toString())
       .emit('users-changed', { event: 'joined' })
   }
 

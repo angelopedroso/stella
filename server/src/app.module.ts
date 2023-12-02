@@ -6,6 +6,8 @@ import { RoomsController } from './controllers/room/room.controller'
 import { MongooseModule } from '@nestjs/mongoose'
 import { Room, RoomSchema, User, UserSchema } from './models'
 import { configDotenv } from 'dotenv'
+import { RoomService } from './services/room/room.service';
+import { UserService } from './services/user/user.service';
 
 configDotenv()
 
@@ -18,6 +20,6 @@ configDotenv()
     ]),
   ],
   controllers: [AppController, RoomsController],
-  providers: [AppService, MessagesGateway],
+  providers: [AppService, MessagesGateway, RoomService, UserService],
 })
 export class AppModule {}

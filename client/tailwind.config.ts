@@ -29,7 +29,7 @@ module.exports = {
           800: '#060c21',
           900: '#030712',
         },
-        background: 'var(--background)',
+        background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',

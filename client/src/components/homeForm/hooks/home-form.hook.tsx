@@ -1,14 +1,16 @@
-import { server } from '@/lib/websocket'
+import { useLanguageContext } from '@/hooks/useLanguageContext'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const languageSchema = z.object({
   learn: z.string().min(1, 'Please, choose a language to learn'),
   native: z.string().min(1, 'Please, choose your native language'),
+  chat: z.string(),
 })
 
-type Language = z.infer<typeof languageSchema>
+export type Language = z.infer<typeof languageSchema>
 
 export function useLanguageForm() {
   const form = useForm<Language>({
@@ -16,11 +18,22 @@ export function useLanguageForm() {
     defaultValues: {
       learn: '',
       native: '',
+      chat: '',
     },
   })
 
+  const { setUserConfig } = useLanguageContext()
+
+  const { push } = useRouter()
+
   function handleFormSubmit(data: Language) {
-    server.emit('enter-chat-room', data)
+    setUserConfig(data)
+
+    if (data.chat === 'text') {
+      push('/chat')
+    } else {
+      push('/video')
+    }
   }
 
   return { form, handleFormSubmit }

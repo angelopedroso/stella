@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { useLanguageForm } from './hooks/home-form.hook'
+import { useLanguageForm } from './hooks/useHomeForm'
 import { countries } from '@/lib/global'
 
 export function HomeForm() {
@@ -84,7 +84,7 @@ export function HomeForm() {
                 className="flex h-32 w-32 flex-col justify-center gap-2 p-4"
                 aria-label="Button to choose text chat."
               >
-                <Video size={36} />
+                <MessageSquare size={36} />
                 <span>Text chat</span>
               </Button>
               <Button
@@ -94,7 +94,7 @@ export function HomeForm() {
                 className="flex h-32 w-32 flex-col justify-center gap-2 p-4"
                 aria-label="Button to choose voice chat."
               >
-                <MessageSquare size={36} />
+                <Video size={36} />
                 <span>Voice chat</span>
               </Button>
             </div>

@@ -1,5 +1,5 @@
 import { HomeIcon } from '@/assets/spoken-icon-home'
-import { HomeForm } from '@/components/homeForm/home-form'
+import { HomeForm } from '@/components/forms/home/home-form'
 
 export default function Home() {
   return (

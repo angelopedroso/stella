@@ -74,6 +74,10 @@ module.exports = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: 0 },
         },
+        'rotate-right': {
+          from: { transformRotate: '90deg' },
+          to: { transformRotate: '135deg' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',

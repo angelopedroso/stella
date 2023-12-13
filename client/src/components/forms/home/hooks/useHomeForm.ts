@@ -1,4 +1,4 @@
-import { useLanguageContext } from '@/hooks/useLanguageContext'
+import { useLanguageContext } from '@/hooks'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -33,7 +33,6 @@ export function useLanguageForm() {
 
   function handleFormSubmit(data: Language) {
     setUserConfig(data)
-    console.log(data)
 
     if (data.chat === 'text') {
       push('/chat')

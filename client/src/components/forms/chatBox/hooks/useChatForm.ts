@@ -1,4 +1,6 @@
+import { useLanguageContext } from '@/hooks'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { KeyboardEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -15,15 +17,25 @@ export function useChatForm() {
       message: '',
     },
   })
+  const { handleSetNewMessage } = useLanguageContext()
+
+  function onEnterPress(e: KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Enter' && e.shiftKey === false) {
+      e.preventDefault()
+      form.handleSubmit(handleFormSubmit)()
+    }
+  }
 
   function handleFormSubmit(data: Message) {
-    console.log(data)
+    handleSetNewMessage(data.message)
 
-    form.setFocus('message', { shouldSelect: true })
+    form.reset()
+    form.setFocus('message')
   }
 
   return {
     form,
     handleFormSubmit,
+    onEnterPress,
   }
 }

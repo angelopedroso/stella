@@ -13,7 +13,7 @@ export function useSocket(url: string) {
       socketIo.disconnect()
     }
     return cleanup
-  }, [])
+  }, [url])
 
   return socket
 }

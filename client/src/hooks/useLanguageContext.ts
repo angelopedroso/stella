@@ -2,10 +2,7 @@ import { LanguageContext } from '@/contexts/languageContext'
 import { useContext } from 'react'
 
 export function useLanguageContext() {
-  const { userConfig, setUserConfig } = useContext(LanguageContext)
+  const languageCtx = useContext(LanguageContext)
 
-  return {
-    userConfig,
-    setUserConfig,
-  }
+  return { ...languageCtx }
 }

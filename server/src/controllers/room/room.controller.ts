@@ -1,9 +1,10 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { Model } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
-import { Room, User } from '@/models'
+import { Room } from '@/models'
+import { User } from '@/@types/user'
 
-@Controller('api/rooms')
+@Controller('api/room')
 export class RoomsController {
   constructor(@InjectModel(Room.name) private readonly model: Model<Room>) {}
 
@@ -21,7 +22,7 @@ export class RoomsController {
 
   @Post('/randomly')
   async findRandomly(@Body() language: User) {
-    return this.model.aggregate([
+    const room = await this.model.aggregate([
       {
         $match: {
           status: 'waiting',
@@ -32,5 +33,7 @@ export class RoomsController {
       },
       { $sample: { size: 1 } },
     ])
+
+    return room
   }
 }

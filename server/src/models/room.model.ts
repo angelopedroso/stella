@@ -1,10 +1,13 @@
+import { User } from '@/@types/user'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { ObjectId, Types } from 'mongoose'
-import { User } from './user.model'
+import { ObjectId } from 'mongoose'
 
 @Schema()
 export class Room {
   _id: ObjectId | string
+
+  @Prop({ required: true })
+  roomId: string
 
   @Prop({ required: true, enum: ['waiting', 'call'] })
   status: string
@@ -15,11 +18,11 @@ export class Room {
   @Prop({ required: true })
   learn: string
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  connectedUsers: User[]
-
-  @Prop({ required: true, default: 0 })
+  @Prop({ required: true, default: 0, max: 2 })
   totalUsers: number
+
+  @Prop({ required: true, maxlength: 2 })
+  users: User[]
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room)

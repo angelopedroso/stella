@@ -42,16 +42,20 @@ export class RoomService {
   }
 
   async addUserToRoom(roomId: Room['_id'], user: User): Promise<Room> {
-    const room = await this.RoomModel.findByIdAndUpdate(roomId, {
-      $push: { users: user },
-      $inc: { totalUsers: 1 },
-      status: 'call',
-    })
+    const room = await this.RoomModel.findByIdAndUpdate(
+      roomId,
+      {
+        $push: { users: user },
+        $inc: { totalUsers: 1 },
+        status: 'call',
+      },
+      { new: true },
+    )
 
     return room.save()
   }
 
-  async removeUserFromRoom(room: Room, userId: User['id']): Promise<void> {
+  async removeUserFromRoom(room: Room, userId: User['id']): Promise<Room> {
     const updateObj = {
       users: room.users.filter((u) => u.id !== userId),
       totalUsers: room.totalUsers - 1,
@@ -68,7 +72,9 @@ export class RoomService {
       })
     }
 
-    await this.RoomModel.findByIdAndUpdate(room._id, updateObj)
+    return await this.RoomModel.findByIdAndUpdate(room._id, updateObj, {
+      new: true,
+    })
   }
 
   async deleteRoom(roomId: string | ObjectId): Promise<void> {

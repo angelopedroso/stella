@@ -43,7 +43,14 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
       if (room.totalUsers < 2) {
         await this.roomService.deleteRoom(room._id)
       } else {
-        await this.roomService.removeUserFromRoom(room, client.id)
+        const newRoom = await this.roomService.removeUserFromRoom(
+          room,
+          client.id,
+        )
+
+        this.server
+          .in(newRoom._id.toString())
+          .emit('slot-room-changed', newRoom.totalUsers)
       }
 
       client.leave(room._id.toString())
@@ -62,21 +69,26 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
       learn: chatData.learn,
     }
 
-    let roomData: Partial<Room> = await this.roomService.findRandomlyRoom(user)
+    let newRoom: Partial<Room> = await this.roomService.findRandomlyRoom(user)
 
-    if (!roomData) {
-      roomData = await this.roomService.createRoom(user)
+    if (!newRoom) {
+      newRoom = await this.roomService.createRoom(user)
     } else {
-      await this.roomService.addUserToRoom(roomData._id, user)
+      newRoom = await this.roomService.addUserToRoom(newRoom._id, user)
     }
 
-    client.emit('chat-room-entered', roomData._id.toString())
+    client.emit('chat-room-entered', newRoom._id.toString())
 
-    client.join(roomData._id.toString())
+    client.join(newRoom._id.toString())
 
-    client.broadcast
-      .to(roomData._id.toString())
-      .emit('users-changed', { user: client.id, event: 'joined' })
+    client.broadcast.to(newRoom._id.toString()).emit('users-changed', {
+      user: client.id,
+      event: 'joined',
+    })
+
+    this.server
+      .in(newRoom._id.toString())
+      .emit('slot-room-changed', newRoom.totalUsers)
   }
 
   @SubscribeMessage('add-message')
@@ -100,7 +112,7 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.handleDisconnect(client)
 
     if (newRoom) {
-      await this.roomService.addUserToRoom(newRoom._id, formattedUser)
+      newRoom = await this.roomService.addUserToRoom(newRoom._id, formattedUser)
     } else {
       newRoom = await this.roomService.createRoom(formattedUser)
     }
@@ -109,8 +121,13 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
 
     client.emit('chat-room-entered', newRoom._id.toString())
 
-    client.broadcast
-      .to(newRoom._id.toString())
-      .emit('users-changed', { user: client.id, event: 'joined' })
+    client.broadcast.to(newRoom._id.toString()).emit('users-changed', {
+      user: client.id,
+      event: 'joined',
+    })
+
+    this.server
+      .in(newRoom._id.toString())
+      .emit('slot-room-changed', newRoom.totalUsers)
   }
 }

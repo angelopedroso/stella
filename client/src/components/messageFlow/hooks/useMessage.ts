@@ -6,13 +6,15 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 export function useMessage() {
   const { userConfig, setRoom, setSocket, setSkipped, skipped } =
     useLanguageContext()
-  const socket = useSocket('http://localhost:8001')
+
+  const socketURL = process.env.NEXT_PUBLIC_DATABASE_URL ?? ''
+  const socket = useSocket(socketURL)
 
   const [messages, setMessages] = useState<Partial<Message[]>>([])
-
-  const { push } = useRouter()
+  const [roomSlot, setRoomSlot] = useState<number>(1)
 
   const messageRef = useRef<HTMLDivElement>(null)
+  const { push } = useRouter()
 
   const handleChatRoomEntered = useCallback(
     (room: string) => setRoom(room),
@@ -23,21 +25,33 @@ export function useMessage() {
     [setMessages],
   )
   const handleUsersChanged = useCallback(
-    (user: Message) => setMessages((prev) => [...prev, user]),
+    (user: Message) => {
+      if (user.event === 'joined') {
+        setMessages([])
+      }
+      setMessages((prev) => [...prev, user])
+    },
     [setMessages],
+  )
+  const handleSlotRoomChanged = useCallback(
+    (room: number) => setRoomSlot(room),
+    [setRoomSlot],
   )
 
   useEffect(() => {
-    if (!userConfig.native) {
+    // If the user not defined basic settings
+    if (!userConfig) {
       push('/')
       return
     }
 
+    // If user clicked on skip button
     if (skipped) {
       setMessages([])
       setSkipped(false)
     }
 
+    // Emit when joined on a room by first time
     socket?.emit('enter-chat-room', {
       native: userConfig.native,
       learn: userConfig.learn,
@@ -46,6 +60,7 @@ export function useMessage() {
     socket?.on('chat-room-entered', handleChatRoomEntered)
     socket?.on('message', handleMessage)
     socket?.on('users-changed', handleUsersChanged)
+    socket?.on('slot-room-changed', handleSlotRoomChanged)
 
     setSocket(socket)
 
@@ -53,11 +68,13 @@ export function useMessage() {
       socket?.off('message')
       socket?.off('chat-room-entered')
       socket?.off('users-changed')
+      socket?.off('slot-room-changed')
     }
   }, [
     handleChatRoomEntered,
     handleMessage,
     handleUsersChanged,
+    handleSlotRoomChanged,
     push,
     setSkipped,
     setSocket,
@@ -67,14 +84,14 @@ export function useMessage() {
   ])
 
   useEffect(() => {
-    if (messageRef.current) {
-      messageRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }
+    // Scroll to current message
+    messageRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
   return {
     messages,
     socket,
     messageRef,
+    roomSlot,
   }
 }

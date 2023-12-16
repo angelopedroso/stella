@@ -12,7 +12,7 @@ export function ChatBoxForm() {
 
   return (
     <div className="flex w-full items-center justify-center border-t bg-background pt-4 md:border-none md:pt-0">
-      <div className="flex w-full items-center justify-center gap-4 rounded-b-lg bg-background px-4 sm:px-0 md:border md:px-16 md:py-8">
+      <div className="flex w-full items-center justify-center gap-4 rounded-lg bg-background px-2 md:border md:px-16 md:py-8">
         <ChatMenu />
         <Form {...form}>
           <form

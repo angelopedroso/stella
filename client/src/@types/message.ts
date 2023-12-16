@@ -3,4 +3,5 @@ export type Message = {
   from: string
   event: 'joined' | 'left'
   user: string
+  roomSlot: number
 }

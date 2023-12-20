@@ -1,9 +1,7 @@
-'use client'
+import { MessageContextType } from '@/contexts/messageContext'
 
-import { useMessageContext } from '@/hooks/useMessageContext'
-
-export function MessageFlow() {
-  const { messages, socket, messageRef, roomSlot } = useMessageContext()
+export function MessageFlow(props: MessageContextType) {
+  const { messageRef, messages, roomSlot, socket } = props
   const maxUsersInRoom = 2
 
   return (
@@ -19,8 +17,8 @@ export function MessageFlow() {
         </p>
       </div>
       {/* Messages chat */}
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto bg-background p-1">
-        {messages.map((message, index) => {
+      <div className="flex w-full flex-1 flex-col gap-4 overflow-y-auto bg-background p-1">
+        {messages?.map((message, index) => {
           return message?.user ? (
             <span
               className="mx-auto rounded-lg bg-secondary px-2 py-1 text-sm font-semibold text-gray-500"

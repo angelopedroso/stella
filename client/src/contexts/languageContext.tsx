@@ -1,11 +1,11 @@
 'use client'
 
 import { Language } from '@/components/forms/home/hooks/useHomeForm'
-import React, { createContext, useState } from 'react'
+import { ReactNode, createContext, useState } from 'react'
 import { Socket } from 'socket.io-client'
 
-type Provider = {
-  children: React.ReactNode
+export type ContextProvider = {
+  children: ReactNode
 }
 
 type Context = {
@@ -22,7 +22,7 @@ type Context = {
 
 export const LanguageContext = createContext<Context>({} as Context)
 
-export function LanguageProvider({ children }: Provider) {
+export function LanguageProvider({ children }: ContextProvider) {
   const [userConfig, setUserConfig] = useState<Language>({} as Language)
   const [room, setRoom] = useState<string>('')
   const [socket, setSocket] = useState<Socket | undefined>()

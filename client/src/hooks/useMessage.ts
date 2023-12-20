@@ -1,7 +1,7 @@
 import { Message } from '@/@types/message'
 import { useLanguageContext, useSocket } from '@/hooks'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, use } from 'react'
 
 export function useMessage() {
   const { userConfig, setRoom, setSocket, setSkipped, skipped } =
@@ -40,7 +40,7 @@ export function useMessage() {
 
   useEffect(() => {
     // If the user not defined basic settings
-    if (!userConfig) {
+    if (!userConfig.native) {
       push('/')
       return
     }
@@ -55,6 +55,7 @@ export function useMessage() {
     socket?.emit('enter-chat-room', {
       native: userConfig.native,
       learn: userConfig.learn,
+      type: userConfig.chat,
     })
 
     socket?.on('chat-room-entered', handleChatRoomEntered)

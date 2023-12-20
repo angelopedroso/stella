@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 
-type TargetProps = {
+export type TargetProps = {
   isDesktop: boolean
   position?: { x: number; y: number }
 }

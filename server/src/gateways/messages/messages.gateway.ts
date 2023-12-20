@@ -67,6 +67,7 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
       id: client.id,
       native: chatData.native,
       learn: chatData.learn,
+      type: chatData.type,
     }
 
     let newRoom: Partial<Room> = await this.roomService.findRandomlyRoom(user)
@@ -105,6 +106,7 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
       id: client.id,
       native: user.native,
       learn: user.learn,
+      type: user.type,
     }
 
     let newRoom = await this.roomService.findRandomlyRoom(formattedUser)

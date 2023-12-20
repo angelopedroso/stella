@@ -17,6 +17,7 @@ export class RoomService {
       status: 'waiting',
       totalUsers: 1,
       roomId: user.id,
+      type: user.type,
     })
 
     const room = await this.RoomModel.findByIdAndUpdate(
@@ -36,6 +37,7 @@ export class RoomService {
       totalUsers: 1,
       native: user.learn,
       learn: user.native,
+      type: user.type,
     })
 
     return room

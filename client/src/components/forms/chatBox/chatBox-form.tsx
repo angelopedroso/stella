@@ -6,14 +6,18 @@ import { Form, FormField } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { Send } from 'lucide-react'
 import { ChatMenu } from './chat-menu'
+import { MessageBoxProps } from '@/components/messageBox'
 
-export function ChatBoxForm() {
+type ChatBoxFormProps = Omit<MessageBoxProps, 'context'>
+
+export function ChatBoxForm({ hasMenu = false }: ChatBoxFormProps) {
   const { form, handleFormSubmit, onEnterPress } = useChatForm()
 
   return (
-    <div className="flex w-full items-center justify-center border-t bg-background pt-4 md:border-none md:pt-0">
-      <div className="flex w-full items-center justify-center gap-4 rounded-lg bg-background px-2 md:border md:px-16 md:py-8">
-        <ChatMenu />
+    <div className="w-full border-t pt-4 md:border-none md:pt-0">
+      <div className="flex items-center justify-center gap-4 rounded-lg px-2 md:border md:px-4 md:py-2 lg:px-16 lg:py-8">
+        {hasMenu && <ChatMenu />}
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleFormSubmit)}

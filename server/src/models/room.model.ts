@@ -7,7 +7,7 @@ export class Room {
   _id: ObjectId | string
 
   @Prop({ required: true })
-  roomId: string
+  owner: string
 
   @Prop({ required: true, enum: ['waiting', 'call'] })
   status: string

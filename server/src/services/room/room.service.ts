@@ -16,7 +16,7 @@ export class RoomService {
       native: user.native,
       status: 'waiting',
       totalUsers: 1,
-      roomId: user.id,
+      owner: user.id,
       type: user.type,
     })
 
@@ -71,6 +71,7 @@ export class RoomService {
       Object.assign(updateObj, {
         native: user.learn,
         learn: user.native,
+        owner: room.users.find((u) => u.id !== userId).id,
       })
     }
 

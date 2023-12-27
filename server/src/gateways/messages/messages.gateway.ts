@@ -78,7 +78,10 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
       newRoom = await this.roomService.addUserToRoom(newRoom._id, user)
     }
 
-    client.emit('chat-room-entered', newRoom._id.toString())
+    client.emit('chat-room-entered', {
+      id: newRoom._id.toString(),
+      isOwner: newRoom.owner === user.id,
+    })
 
     client.join(newRoom._id.toString())
 
@@ -119,9 +122,12 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
       newRoom = await this.roomService.createRoom(formattedUser)
     }
 
-    client.join(newRoom._id.toString())
+    client.emit('chat-room-entered', {
+      id: newRoom._id.toString(),
+      isOwner: newRoom.owner === user.id,
+    })
 
-    client.emit('chat-room-entered', newRoom._id.toString())
+    client.join(newRoom._id.toString())
 
     client.broadcast.to(newRoom._id.toString()).emit('users-changed', {
       user: client.id,
@@ -131,5 +137,10 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.server
       .in(newRoom._id.toString())
       .emit('slot-room-changed', newRoom.totalUsers)
+  }
+
+  @SubscribeMessage('video-chat-join')
+  videoChatJoin(client: Socket, data: { peerId: string; roomId: string }) {
+    client.to(data.roomId).emit('video-answer', { peerId: data.peerId })
   }
 }

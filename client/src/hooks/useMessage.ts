@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Message } from '@/@types/message'
 import { useLanguageContext, useSocket } from '@/hooks'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect, useRef, useCallback, use } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 export function useMessage() {
   const { userConfig, setRoom, setSocket, setSkipped, skipped } =
@@ -17,7 +18,7 @@ export function useMessage() {
   const { push } = useRouter()
 
   const handleChatRoomEntered = useCallback(
-    (room: string) => setRoom(room),
+    (room: { id: string; isOwner: boolean }) => setRoom(room),
     [setRoom],
   )
   const handleMessage = useCallback(
@@ -76,12 +77,11 @@ export function useMessage() {
     handleMessage,
     handleUsersChanged,
     handleSlotRoomChanged,
-    push,
     setSkipped,
     setSocket,
     skipped,
-    socket,
     userConfig,
+    socket,
   ])
 
   useEffect(() => {

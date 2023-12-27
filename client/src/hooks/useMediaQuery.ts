@@ -6,9 +6,9 @@ export type TargetProps = {
 }
 
 export function useMediaQuery(width: number) {
-  const [targetReached, setTargetReached] = useState<TargetProps>(
-    {} as TargetProps,
-  )
+  const [targetReached, setTargetReached] = useState<TargetProps>({
+    isDesktop: false,
+  })
 
   const updateTarget = useCallback((e: MediaQueryListEvent) => {
     if (e.matches) {

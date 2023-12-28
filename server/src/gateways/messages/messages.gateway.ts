@@ -51,6 +51,8 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
         this.server
           .in(newRoom._id.toString())
           .emit('slot-room-changed', newRoom.totalUsers)
+
+        this.server.in(newRoom._id.toString()).emit('video-leave')
       }
 
       client.leave(room._id.toString())
@@ -95,14 +97,6 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
       .emit('slot-room-changed', newRoom.totalUsers)
   }
 
-  @SubscribeMessage('add-message')
-  addMessage(client: Socket, message: Message) {
-    this.server.in(message.roomId).emit('message', {
-      text: message.text,
-      from: client.id,
-    })
-  }
-
   @SubscribeMessage('skip-chat-room')
   async skipChatRoom(client: Socket, user: User) {
     const formattedUser = {
@@ -137,6 +131,14 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.server
       .in(newRoom._id.toString())
       .emit('slot-room-changed', newRoom.totalUsers)
+  }
+
+  @SubscribeMessage('add-message')
+  addMessage(client: Socket, message: Message) {
+    this.server.in(message.roomId).emit('message', {
+      text: message.text,
+      from: client.id,
+    })
   }
 
   @SubscribeMessage('video-chat-join')

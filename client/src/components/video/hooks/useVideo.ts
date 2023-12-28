@@ -12,8 +12,13 @@ type IPeerParams = {
 
 export function useVideo() {
   const { socket, room } = useLanguageContext()
+
   const [me, setMe] = useState<Peer>()
+
+  const [guestStream, setGuestStream] = useState<MediaStream>()
   const [stream, setStream] = useState<MediaStream>()
+  const [isSearching, setSearching] = useState(true)
+  const [isPermissionGranted, setPermissionGranted] = useState(false)
 
   const myVideoRef = useRef<HTMLVideoElement>(null)
   const guestVideoRef = useRef<HTMLVideoElement>(null)
@@ -33,6 +38,7 @@ export function useVideo() {
         })
 
         setStream(stream)
+        setPermissionGranted(true)
 
         if (myVideoRef.current) {
           myVideoRef.current.srcObject = stream
@@ -42,6 +48,11 @@ export function useVideo() {
       console.error(error)
     }
   }, [])
+
+  function removePeer() {
+    setSearching(true)
+    guestStream?.getTracks().forEach((track) => track.stop())
+  }
 
   useEffect(() => {
     if (socket) {
@@ -54,20 +65,24 @@ export function useVideo() {
       setMe(peer)
 
       getStream()
+
+      socket.on('video-leave', removePeer)
     }
   }, [socket])
 
   useEffect(() => {
-    if (!me || !room) return
+    if (!me || !room || !isPermissionGranted) return
 
     socket?.emit('video-chat-join', {
       roomId: room.id,
       peerId: me?.id,
     } as IPeerParams)
-  }, [room])
+  }, [room, isPermissionGranted])
 
   useEffect(() => {
     if (!me || !stream) return
+
+    setSearching(true)
 
     socket?.on('video-answer', ({ peerId }: IPeerParams) => {
       const call = me.call(peerId, stream, {
@@ -79,9 +94,12 @@ export function useVideo() {
         },
       })
 
+      setSearching(false)
+
       call.on('stream', (guestStream) => {
         if (guestVideoRef.current) {
           guestVideoRef.current.srcObject = guestStream
+          setGuestStream(guestStream)
         }
       })
     })
@@ -89,9 +107,12 @@ export function useVideo() {
     me.on('call', (call) => {
       call.answer(stream)
 
+      setSearching(false)
+
       call.on('stream', (guestStream) => {
         if (guestVideoRef.current) {
           guestVideoRef.current.srcObject = guestStream
+          setGuestStream(guestStream)
         }
       })
     })
@@ -100,6 +121,6 @@ export function useVideo() {
   return {
     myVideoRef,
     guestVideoRef,
-    me,
+    isSearching,
   }
 }

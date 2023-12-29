@@ -1,12 +1,14 @@
 'use client'
 
-import TextareaAutosize from 'react-textarea-autosize'
 import { useChatForm } from './hooks/useChatForm'
+
+import TextareaAutosize from 'react-textarea-autosize'
 import { Form, FormField } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
-import { Send } from 'lucide-react'
-import { ChatMenu } from './chat-menu'
 import { MessageBoxProps } from '@/components/messageBox'
+import { ChatMenu } from './chat-menu'
+
+import { Send } from 'lucide-react'
 
 type ChatBoxFormProps = Omit<MessageBoxProps, 'context'>
 

@@ -3,8 +3,7 @@
 import React from 'react'
 import { MessageBox } from '@/components/messageBox'
 import { VideoMenu } from './menu'
-import { useMessageContext } from '@/hooks/useMessageContext'
-import { useMediaQueryContext } from '@/hooks/useMediaQueryContext'
+import { useMessageContext, useMediaQueryContext } from '@/hooks'
 
 export function ChatVideo() {
   const { isDesktop } = useMediaQueryContext()

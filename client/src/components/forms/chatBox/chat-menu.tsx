@@ -1,5 +1,7 @@
 'use client'
 
+import { useChatMenu } from '@/hooks/useChatMenu'
+
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -7,8 +9,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
+
 import { Menu, LogOut, SkipForward } from 'lucide-react'
-import { useChatMenu } from './hooks/useChatMenu'
 
 export function ChatMenu() {
   const { handleExitChat, handleSkipChat } = useChatMenu()

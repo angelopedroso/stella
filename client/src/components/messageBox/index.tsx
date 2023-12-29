@@ -1,6 +1,6 @@
 import { MessageContextType } from '@/contexts/messageContext'
-import { ChatBoxForm } from '../forms/chatBox/chatBox-form'
-import { MessageFlow } from '../messageFlow'
+import { ChatBoxForm } from '@/components/forms/chatBox/chatBox-form'
+import { MessageFlow } from '@/components/messageFlow'
 
 export type MessageBoxProps = {
   hasMenu?: boolean

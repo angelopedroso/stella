@@ -1,7 +1,8 @@
-import { ChatVideo } from '@/components/video/chat'
-import { VideoScreen } from '@/components/video/screen'
 import { MediaQueryProvider } from '@/contexts/mediaQueryContext'
 import { MessageProvider } from '@/contexts/messageContext'
+
+import { ChatVideo } from '@/components/video/chat'
+import { VideoScreen } from '@/components/video/screen'
 
 export default function VoiceChatRoom() {
   return (

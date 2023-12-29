@@ -26,10 +26,11 @@ export function VideoScreen() {
         <video
           autoPlay
           playsInline
-          className="w-full grow rounded-lg border object-cover"
+          data-muted={guestOptions.micStatus}
+          className="w-full grow rounded-lg border object-cover data-[muted=true]:border-destructive"
           ref={guestVideoRef}
           aria-label="Guest video cam"
-          muted={guestOptions?.micStatus}
+          muted={guestOptions.micStatus}
         >
           Your browser does not support the video tag.
         </video>
@@ -49,7 +50,8 @@ export function VideoScreen() {
           <video
             autoPlay
             playsInline
-            className="h-full object-cover"
+            data-muted={checkedMic}
+            className="h-full object-cover data-[muted=true]:border-destructive"
             ref={myVideoRef}
             aria-label="Your video cam"
             muted

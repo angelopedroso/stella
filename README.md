@@ -7,7 +7,7 @@
 
 Welcome to Stella, your chat platform that makes communication in different languages easy and efficient. Stella allows text messages and video calls, providing an integrated and user-friendly chat experience.
 
-### Key Features
+## Key Features
 
 - **Text Messages and Video Calls:** Communicate through text messages or dive into a more personal experience with video calls.
 

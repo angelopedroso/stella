@@ -3,24 +3,22 @@
 import Draggable from 'react-draggable'
 
 import { useVideo } from './hooks/useVideo'
-import { useMediaQueryContext } from '@/hooks/useMediaQueryContext'
+import { useChatMenu, useMediaQueryContext } from '@/hooks'
 
-import { MenuUtils } from '@/components/ui/menu-util'
+import { MenuUtils, MenuUtilsToggle } from '@/components/ui/menu-util'
 
 import { Loader2, Mic, MicOff, Video, VideoOff } from 'lucide-react'
-import { Toggle } from '../ui/toggle'
-import { useVideoMenu } from './hooks/useVideoMenu'
 
 export function VideoScreen() {
   const { isDesktop, position } = useMediaQueryContext()
-  const { myVideoRef, guestVideoRef, isSearching, guestStream } = useVideo()
+  const { myVideoRef, guestVideoRef, isSearching } = useVideo()
   const {
     checkedMic,
     handleToggleMic,
     checkedVideo,
     handleToggleVideo,
     guestOptions,
-  } = useVideoMenu(guestStream)
+  } = useChatMenu()
 
   return (
     <div className="relative flex h-full flex-col gap-4 md:h-72 md:flex-row-reverse md:justify-center lg:h-full lg:flex-col">
@@ -57,20 +55,18 @@ export function VideoScreen() {
             muted
           />
           <MenuUtils>
-            <Toggle
-              className="rounded-none hover:bg-primary/40 hover:text-foreground data-[state=on]:bg-primary/60"
+            <MenuUtilsToggle
               aria-label="Mic toggle button"
               onPressedChange={handleToggleMic}
             >
               {checkedMic ? <MicOff /> : <Mic />}
-            </Toggle>
-            <Toggle
-              className="rounded-none hover:bg-primary/40 hover:text-foreground data-[state=on]:bg-primary/60"
+            </MenuUtilsToggle>
+            <MenuUtilsToggle
               aria-label="Video toggle button"
               onPressedChange={handleToggleVideo}
             >
               {checkedVideo ? <VideoOff /> : <Video />}
-            </Toggle>
+            </MenuUtilsToggle>
           </MenuUtils>
         </div>
       </Draggable>

@@ -2,35 +2,65 @@
 
 import Sheet from 'react-modal-sheet'
 
-import { useChatMenu } from '../forms/chatBox/hooks/useChatMenu'
+import { useChatMenu } from '@/hooks'
 import { MessageContextType } from '@/contexts/messageContext'
 
-import { MenuUtils, MenuUtilsButton } from '@/components/ui/menu-util'
+import {
+  MenuUtils,
+  MenuUtilsButton,
+  MenuUtilsToggle,
+} from '@/components/ui/menu-util'
 import { MessageBox } from '@/components/messageBox'
 
-import { LogOut, MessageSquare, SkipForward } from 'lucide-react'
+import {
+  LogOut,
+  MessageSquare,
+  Mic,
+  MicOff,
+  SkipForward,
+  Video,
+  VideoOff,
+} from 'lucide-react'
 
 export interface VideoMenuProps {
   context: MessageContextType
 }
 
 export function VideoMenu({ context }: VideoMenuProps) {
-  const { handleExitChat, handleSkipChat, isOpen, openModal } = useChatMenu()
+  const { checkedMic, checkedVideo, ...menu } = useChatMenu()
 
   return (
     <>
       <MenuUtils variant="mobile">
-        <MenuUtilsButton onClick={handleExitChat}>
+        <MenuUtilsButton
+          aria-label="Exit chat button"
+          onClick={menu.handleExitChat}
+        >
           <LogOut />
         </MenuUtilsButton>
-        <MenuUtilsButton onClick={openModal}>
+        <MenuUtilsToggle
+          aria-label="Mic toggle button"
+          onPressedChange={menu.handleToggleMic}
+        >
+          {checkedMic ? <MicOff /> : <Mic />}
+        </MenuUtilsToggle>
+        <MenuUtilsButton aria-label="Open chat button" onClick={menu.openModal}>
           <MessageSquare />
         </MenuUtilsButton>
-        <MenuUtilsButton onClick={handleSkipChat}>
+        <MenuUtilsToggle
+          aria-label="Video toggle button"
+          onPressedChange={menu.handleToggleVideo}
+        >
+          {checkedVideo ? <VideoOff /> : <Video />}
+        </MenuUtilsToggle>
+        <MenuUtilsButton
+          aria-label="Skip chat room button"
+          onClick={menu.handleSkipChat}
+        >
           <SkipForward />
         </MenuUtilsButton>
       </MenuUtils>
-      <Sheet isOpen={isOpen} onClose={openModal}>
+      <Sheet isOpen={menu.isOpen} onClose={menu.openModal}>
         <Sheet.Container>
           <Sheet.Header className="bg-background" />
           <Sheet.Content className="bg-background py-2">

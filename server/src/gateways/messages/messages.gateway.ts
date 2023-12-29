@@ -15,6 +15,7 @@ import { User } from '@/@types/user'
 @WebSocketGateway({ cors: '*' })
 export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
   private logger: Logger = new Logger('MessagesGateway')
+  private totalUsers: number = 0
 
   constructor(private readonly roomService: RoomService) {}
 
@@ -27,10 +28,15 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
 
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`)
+    this.totalUsers++
+    this.server.emit('total-users', this.totalUsers)
   }
 
   async handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`)
+
+    this.totalUsers--
+    this.server.emit('total-users', this.totalUsers)
 
     const room = await this.roomService.findUserByRoom(client.id)
 
@@ -144,5 +150,15 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
   @SubscribeMessage('video-chat-join')
   videoChatJoin(client: Socket, data: { peerId: string; roomId: string }) {
     client.to(data.roomId).emit('video-answer', { peerId: data.peerId })
+  }
+
+  @SubscribeMessage('video-menu-mic')
+  videoMenuMic(client: Socket, data: { roomId: string; micStatus: boolean }) {
+    client.to(data.roomId).emit('video-menu-mic', data.micStatus)
+  }
+
+  @SubscribeMessage('video-menu-cam')
+  videoMenuCam(client: Socket, data: { roomId: string; camStatus: boolean }) {
+    client.to(data.roomId).emit('video-menu-cam', data.camStatus)
   }
 }

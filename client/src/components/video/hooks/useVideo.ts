@@ -11,7 +11,7 @@ type IPeerParams = {
 }
 
 export function useVideo() {
-  const { socket, room } = useLanguageContext()
+  const { socket, room, addGuestStream } = useLanguageContext()
 
   const [me, setMe] = useState<Peer>()
 
@@ -112,6 +112,7 @@ export function useVideo() {
         if (guestVideoRef.current) {
           guestVideoRef.current.srcObject = guestStream
           setGuestStream(guestStream)
+          addGuestStream(guestStream)
         }
       })
     })
@@ -125,6 +126,7 @@ export function useVideo() {
         if (guestVideoRef.current) {
           guestVideoRef.current.srcObject = guestStream
           setGuestStream(guestStream)
+          addGuestStream(guestStream)
         }
       })
     })

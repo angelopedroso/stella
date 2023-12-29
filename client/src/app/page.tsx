@@ -1,5 +1,6 @@
 import { HomeIcon } from '@/assets/spoken-icon-home'
 import { HomeForm } from '@/components/forms/home/home-form'
+import { HomeText } from '@/components/homeText'
 
 export default function Home() {
   return (
@@ -9,15 +10,7 @@ export default function Home() {
           Reveal your Fluency
         </h2>
 
-        <p className="font-semibold leading-6 text-slate-700 dark:text-slate-300">
-          Explore an innovative space where language barriers dissolve in
-          engaging experiences. Here, dive into video chats that transcend
-          conventional communication, enhancing your skills in different
-          languages. Connect with people from around the world and discover a
-          unique approach to improving your linguistic abilities. Embark on this
-          virtual journey that goes beyond words, boosting your fluency in
-          surprising ways.
-        </p>
+        <HomeText />
 
         <HomeForm />
       </div>

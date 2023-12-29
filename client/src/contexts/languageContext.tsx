@@ -20,6 +20,8 @@ type Context = {
   handleSetNewMessage: (message: string) => void
   skipped: boolean
   setSkipped: (skipped: boolean) => void
+  addGuestStream: (stream: MediaStream) => void
+  guestStream: MediaStream
 }
 
 export const LanguageContext = createContext<Context>({} as Context)
@@ -29,6 +31,11 @@ export function LanguageProvider({ children }: ContextProvider) {
   const [room, setRoom] = useState<Room>({} as Room)
   const [socket, setSocket] = useState<Socket | undefined>()
   const [skipped, setSkipped] = useState<boolean>(false)
+  const [guestStream, setGuestStream] = useState<MediaStream>({} as MediaStream)
+
+  function addGuestStream(stream: MediaStream) {
+    setGuestStream(stream)
+  }
 
   function handleSetNewMessage(message: string) {
     socket?.emit('add-message', {
@@ -40,15 +47,17 @@ export function LanguageProvider({ children }: ContextProvider) {
   return (
     <LanguageContext.Provider
       value={{
-        userConfig,
         setUserConfig,
         handleSetNewMessage,
         setRoom,
-        room,
         setSocket,
+        setSkipped,
+        addGuestStream,
+        userConfig,
+        room,
         socket,
         skipped,
-        setSkipped,
+        guestStream,
       }}
     >
       {children}

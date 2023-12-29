@@ -23,10 +23,17 @@ export function useVideo() {
   const myVideoRef = useRef<HTMLVideoElement>(null)
   const guestVideoRef = useRef<HTMLVideoElement>(null)
 
+  const peerURL = `${process.env.NEXT_PUBLIC_DATABASE_URL}`
+  const peerPort = Number(process.env.NEXT_PUBLIC_PEER_PORT)
+
   const getStream = useCallback(async () => {
     try {
       if (typeof navigator !== 'undefined') {
-        const stream = await navigator.mediaDevices.getUserMedia({
+        const devices = await navigator.mediaDevices.enumerateDevices()
+
+        const hasVideo = devices.find((device) => device.kind === 'videoinput')
+
+        const constraints: MediaStreamConstraints = {
           audio: {
             autoGainControl: false,
             channelCount: 2,
@@ -35,7 +42,10 @@ export function useVideo() {
             sampleRate: 48000,
             sampleSize: 16,
           },
-        })
+          video: !!hasVideo,
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints)
 
         setStream(stream)
         setPermissionGranted(true)
@@ -45,7 +55,9 @@ export function useVideo() {
         }
       }
     } catch (error) {
-      console.error(error)
+      if (error instanceof DOMException) {
+        console.error(error)
+      }
     }
   }, [])
 
@@ -57,8 +69,8 @@ export function useVideo() {
   useEffect(() => {
     if (socket) {
       const peer = new Peer(socket.id, {
-        host: 'localhost',
-        port: 9001,
+        host: peerURL,
+        port: peerPort,
         path: '/peer',
       })
 
@@ -122,5 +134,6 @@ export function useVideo() {
     myVideoRef,
     guestVideoRef,
     isSearching,
+    guestStream,
   }
 }

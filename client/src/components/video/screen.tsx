@@ -13,9 +13,14 @@ import { useVideoMenu } from './hooks/useVideoMenu'
 
 export function VideoScreen() {
   const { isDesktop, position } = useMediaQueryContext()
-  const { myVideoRef, guestVideoRef, isSearching } = useVideo()
-  const { checkedMic, handleToggleMic, checkedVideo, handleToggleVideo } =
-    useVideoMenu()
+  const { myVideoRef, guestVideoRef, isSearching, guestStream } = useVideo()
+  const {
+    checkedMic,
+    handleToggleMic,
+    checkedVideo,
+    handleToggleVideo,
+    guestOptions,
+  } = useVideoMenu(guestStream)
 
   return (
     <div className="relative flex h-full flex-col gap-4 md:h-72 md:flex-row-reverse md:justify-center lg:h-full lg:flex-col">
@@ -26,6 +31,7 @@ export function VideoScreen() {
           className="w-full grow rounded-lg border object-cover"
           ref={guestVideoRef}
           aria-label="Guest video cam"
+          muted={guestOptions?.micStatus}
         >
           Your browser does not support the video tag.
         </video>
@@ -45,7 +51,7 @@ export function VideoScreen() {
           <video
             autoPlay
             playsInline
-            className="h-full bg-red-500 object-cover"
+            className="h-full object-cover"
             ref={myVideoRef}
             aria-label="Your video cam"
             muted

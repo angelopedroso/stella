@@ -11,7 +11,7 @@ type IPeerParams = {
 }
 
 export function useVideo() {
-  const { socket, room, addGuestStream } = useLanguageContext()
+  const { socket, room, addGuestStream, addMyStream } = useLanguageContext()
 
   const [me, setMe] = useState<Peer>()
 
@@ -48,6 +48,7 @@ export function useVideo() {
         const stream = await navigator.mediaDevices.getUserMedia(constraints)
 
         setStream(stream)
+        addMyStream(stream)
         setPermissionGranted(true)
 
         if (myVideoRef.current) {

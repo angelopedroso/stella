@@ -8,7 +8,7 @@ type GuestOptionsProps = {
 }
 
 export function useChatMenu() {
-  const { socket, userConfig, setSkipped, room, guestStream } =
+  const { socket, userConfig, setSkipped, room, guestStream, myStream } =
     useLanguageContext()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -66,6 +66,13 @@ export function useChatMenu() {
     const data = {
       roomId: room.id,
       camStatus: !checkedVideo,
+    }
+
+    if (myStream) {
+      const tracks = myStream.getVideoTracks()
+      if (tracks.length > 0) {
+        tracks[0].enabled = !data.camStatus
+      }
     }
 
     socket?.emit('video-menu-cam', data)

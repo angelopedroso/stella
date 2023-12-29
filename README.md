@@ -1,9 +1,5 @@
 # Stella - Multilingual Chat Application
 
-> **Note**: This is a README template for the Stella application, a chat website aimed at facilitating communication in different languages. The application supports text messages and video calls and features a dark mode. The client is built with Next.js 14, Tailwind CSS, ShadCN (a component library), React Hook Form, Zod, and utilizes WebSockets (socket.io) and P2P (PeerJS). The server is developed with NestJS, Mongoose, Peer, and Socket.io.
-
-## Stella - Multilingual Chat
-
 Welcome to Stella, your chat platform that makes communication in different languages easy and efficient. Stella allows text messages and video calls, providing an integrated and user-friendly chat experience.
 
 ### Key Features

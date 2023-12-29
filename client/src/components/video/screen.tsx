@@ -50,8 +50,7 @@ export function VideoScreen() {
           <video
             autoPlay
             playsInline
-            data-muted={checkedMic}
-            className="h-full object-cover data-[muted=true]:border-destructive"
+            className="h-full object-cover"
             ref={myVideoRef}
             aria-label="Your video cam"
             muted

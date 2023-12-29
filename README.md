@@ -1,3 +1,8 @@
+
+<p align="center">
+  <img src="https://i.ibb.co/rsP200t/stella.png" alt="Stella Icon" width="250" height="250">
+</p>
+
 # Stella - Multilingual Chat Application
 
 Welcome to Stella, your chat platform that makes communication in different languages easy and efficient. Stella allows text messages and video calls, providing an integrated and user-friendly chat experience.

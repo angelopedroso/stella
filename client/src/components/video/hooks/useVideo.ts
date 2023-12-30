@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLanguageContext } from '@/hooks'
 
 import Peer from 'peerjs'
+import { useStreamContext } from '@/hooks/useStreamContext'
 
 type IPeerParams = {
   peerId: string
@@ -11,7 +12,8 @@ type IPeerParams = {
 }
 
 export function useVideo() {
-  const { socket, room, addGuestStream, addMyStream } = useLanguageContext()
+  const { socket, room } = useLanguageContext()
+  const { addGuestStream, addMyStream } = useStreamContext()
 
   const [me, setMe] = useState<Peer>()
 
@@ -72,6 +74,7 @@ export function useVideo() {
 
         const peer = new PeerJS(socket.id, {
           host: peerURL,
+          port: peerPort,
         })
 
         setMe(peer)
@@ -83,7 +86,11 @@ export function useVideo() {
         getStream()
       }
 
-      socket.on('video-leave', removePeer)
+      socket.on('users-changed', (data) => {
+        if (data.event === 'left') {
+          removePeer()
+        }
+      })
     }
   }, [socket])
 

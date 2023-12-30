@@ -28,32 +28,30 @@ export function useVideo() {
 
   const getStream = useCallback(async () => {
     try {
-      if (typeof navigator !== 'undefined') {
-        const devices = await navigator.mediaDevices.enumerateDevices()
+      const devices = await navigator.mediaDevices.enumerateDevices()
 
-        const hasVideo = devices.find((device) => device.kind === 'videoinput')
+      const hasVideo = devices.find((device) => device.kind === 'videoinput')
 
-        const constraints: MediaStreamConstraints = {
-          audio: {
-            autoGainControl: false,
-            channelCount: 2,
-            echoCancellation: false,
-            noiseSuppression: false,
-            sampleRate: 48000,
-            sampleSize: 16,
-          },
-          video: !!hasVideo,
-        }
+      const constraints: MediaStreamConstraints = {
+        audio: {
+          autoGainControl: false,
+          channelCount: 2,
+          echoCancellation: false,
+          noiseSuppression: false,
+          sampleRate: 48000,
+          sampleSize: 16,
+        },
+        video: !!hasVideo,
+      }
 
-        const stream = await navigator.mediaDevices.getUserMedia(constraints)
+      const stream = await navigator.mediaDevices.getUserMedia(constraints)
 
-        setStream(stream)
-        addMyStream(stream)
-        setPermissionGranted(true)
+      setStream(stream)
+      addMyStream(stream)
+      setPermissionGranted(true)
 
-        if (myVideoRef.current) {
-          myVideoRef.current.srcObject = stream
-        }
+      if (myVideoRef.current) {
+        myVideoRef.current.srcObject = stream
       }
     } catch (error) {
       if (error instanceof DOMException) {
@@ -69,28 +67,36 @@ export function useVideo() {
 
   useEffect(() => {
     if (socket) {
-      const peer = new Peer(socket.id, {
-        host: peerURL,
-        port: peerPort,
-        path: '/peer',
-      })
+      const fn = async () => {
+        const PeerJS = (await import('peerjs')).default
 
-      setMe(peer)
+        const peer = new PeerJS(socket.id, {
+          host: peerURL,
+          port: peerPort,
+          path: '/peer',
+        })
 
-      getStream()
+        setMe(peer)
+      }
+
+      fn()
+
+      if (typeof navigator !== 'undefined') {
+        getStream()
+      }
 
       socket.on('video-leave', removePeer)
     }
   }, [socket])
 
   useEffect(() => {
-    if (!me || !room || !isPermissionGranted) return
+    if (!me || !room || !isPermissionGranted || !stream) return
 
     socket?.emit('video-chat-join', {
       roomId: room.id,
       peerId: me?.id,
     } as IPeerParams)
-  }, [room, isPermissionGranted])
+  }, [room, isPermissionGranted, stream])
 
   useEffect(() => {
     if (!me || !stream) return

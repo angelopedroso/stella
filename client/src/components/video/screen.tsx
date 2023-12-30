@@ -20,21 +20,17 @@ export function VideoScreen() {
   return (
     <div className="relative flex h-full flex-col gap-4 md:h-72 md:flex-row-reverse md:justify-center lg:h-full lg:max-w-[18.75rem] lg:flex-col">
       {!isSearching ? (
-        <div
+        <video
+          autoPlay
+          playsInline
           data-muted={guestOptions.micStatus}
-          className="h-full grow basis-1/2 overflow-hidden rounded-lg border object-cover data-[muted=true]:border-destructive md:w-full"
+          className="grow basis-1/2 rounded-lg border object-cover data-[muted=true]:border-destructive"
+          ref={guestVideoRef}
+          aria-label="Guest video cam"
+          muted={guestOptions.micStatus}
         >
-          <video
-            autoPlay
-            playsInline
-            className="h-full w-full object-cover"
-            ref={myVideoRef}
-            aria-label="Guest video cam"
-            muted={guestOptions.micStatus}
-          >
-            Your browser does not support the video tag.
-          </video>
-        </div>
+          Your browser does not support the video tag.
+        </video>
       ) : (
         <div className="flex w-full grow basis-1/2 flex-col items-center justify-center rounded-lg border text-secondary">
           <Loader2 className="h-1/2 w-1/2 animate-spin" />

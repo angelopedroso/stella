@@ -11,9 +11,9 @@ import { Message } from '@/@types/message'
 import { RoomService } from '@/services/room/room.service'
 import { Logger } from '@nestjs/common'
 import { User } from '@/@types/user'
-import { configDotenv } from 'dotenv'
+import { config } from 'dotenv'
 
-configDotenv()
+config()
 
 @WebSocketGateway({ cors: process.env.WEBSITE_URL })
 export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
@@ -41,6 +41,10 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.totalUsers--
     this.server.emit('total-users', this.totalUsers)
 
+    this.disconnectUser(client)
+  }
+
+  async disconnectUser(client: Socket) {
     const room = await this.roomService.findUserByRoom(client.id)
 
     if (room) {
@@ -60,8 +64,6 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
         this.server
           .in(newRoom._id.toString())
           .emit('slot-room-changed', newRoom.totalUsers)
-
-        this.server.in(newRoom._id.toString()).emit('video-leave')
       }
 
       client.leave(room._id.toString())
@@ -117,7 +119,7 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
 
     let newRoom = await this.roomService.findRandomlyRoom(formattedUser)
 
-    this.handleDisconnect(client)
+    this.disconnectUser(client)
 
     if (newRoom) {
       newRoom = await this.roomService.addUserToRoom(newRoom._id, formattedUser)

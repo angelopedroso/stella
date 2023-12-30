@@ -24,7 +24,7 @@ export function VideoScreen() {
           autoPlay
           playsInline
           data-muted={guestOptions.micStatus}
-          className="w-full grow basis-1/2 rounded-lg border object-cover data-[muted=true]:border-destructive"
+          className="grow basis-1/2 rounded-lg border object-cover data-[muted=true]:border-destructive"
           ref={guestVideoRef}
           aria-label="Guest video cam"
           muted={guestOptions.micStatus}
@@ -37,8 +37,8 @@ export function VideoScreen() {
         </div>
       )}
 
-      <div className="absolute right-2 top-2 h-32 w-24 rounded-lg border md:static md:h-full md:w-full md:basis-1/2">
-        <div className="relative h-full w-full overflow-hidden">
+      <div className="absolute right-2 top-2 h-32 w-24 overflow-hidden rounded-lg border md:static md:h-full md:w-full md:basis-1/2">
+        <div className="relative h-full w-full bg-background">
           <video
             autoPlay
             playsInline

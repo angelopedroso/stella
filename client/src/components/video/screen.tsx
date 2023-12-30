@@ -59,12 +59,14 @@ export function VideoScreen() {
             <MenuUtilsToggle
               aria-label="Mic toggle button"
               onPressedChange={handleToggleMic}
+              pressed={checkedMic}
             >
               {checkedMic ? <MicOff /> : <Mic />}
             </MenuUtilsToggle>
             <MenuUtilsToggle
               aria-label="Video toggle button"
               onPressedChange={handleToggleVideo}
+              pressed={checkedVideo}
             >
               {checkedVideo ? <VideoOff /> : <Video />}
             </MenuUtilsToggle>

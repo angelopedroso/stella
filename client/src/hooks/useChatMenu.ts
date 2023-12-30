@@ -1,6 +1,8 @@
 import { useLanguageContext } from '@/hooks'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+import { useStreamContext } from './useStreamContext'
+import { Message } from '@/@types/message'
 
 type GuestOptionsProps = {
   micStatus: boolean
@@ -8,8 +10,9 @@ type GuestOptionsProps = {
 }
 
 export function useChatMenu() {
-  const { socket, userConfig, setSkipped, room, guestStream, myStream } =
-    useLanguageContext()
+  const { socket, userConfig, setSkipped, room } = useLanguageContext()
+  const { guestStream, myStream } = useStreamContext()
+
   const [isOpen, setIsOpen] = useState(false)
 
   const [checkedMic, setCheckedMic] = useState(false)
@@ -85,6 +88,13 @@ export function useChatMenu() {
       }),
     )
     socket?.on('video-menu-cam', toggleCamera)
+
+    socket?.on('users-changed', (user: Message) => {
+      if (user.event === 'left') {
+        setCheckedMic(false)
+        setCheckedVideo(false)
+      }
+    })
 
     return () => {
       socket?.off('video-menu-mic')

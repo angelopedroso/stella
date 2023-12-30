@@ -9,9 +9,7 @@ async function bootstrap() {
   const websiteURL = process.env.WEBSITE_URL
 
   const app = await NestFactory.create(AppModule)
-
-  PeerServer({ path: '/peer' })
-
+  PeerServer({ port: 9001, path: '/peer' })
   app.enableCors({
     origin: websiteURL,
   })

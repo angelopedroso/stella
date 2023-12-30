@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { Room, RoomSchema } from './models'
 import { configDotenv } from 'dotenv'
 import { RoomService } from './services/room/room.service'
+import { PeerService } from './services/peer/peer.service'
 
 configDotenv()
 
@@ -15,6 +16,6 @@ configDotenv()
     MongooseModule.forFeature([{ name: Room.name, schema: RoomSchema }]),
   ],
   controllers: [AppController],
-  providers: [AppService, MessagesGateway, RoomService],
+  providers: [AppService, MessagesGateway, RoomService, PeerService],
 })
 export class AppModule {}

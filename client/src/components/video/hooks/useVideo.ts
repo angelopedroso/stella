@@ -12,7 +12,7 @@ type IPeerParams = {
 }
 
 export function useVideo() {
-  const { socket, room } = useLanguageContext()
+  const { socket, room, skipped } = useLanguageContext()
   const { addGuestStream, addMyStream } = useStreamContext()
 
   const [me, setMe] = useState<Peer>()
@@ -92,7 +92,7 @@ export function useVideo() {
         }
       })
     }
-  }, [socket])
+  }, [socket, skipped])
 
   useEffect(() => {
     if (!me || !room || !isPermissionGranted || !stream) return
@@ -101,7 +101,7 @@ export function useVideo() {
       roomId: room.id,
       peerId: me?.id,
     } as IPeerParams)
-  }, [room, isPermissionGranted, stream])
+  }, [room, isPermissionGranted, stream, skipped])
 
   useEffect(() => {
     if (!me || !stream) return
@@ -110,6 +110,14 @@ export function useVideo() {
 
     socket?.on('video-answer', ({ peerId }: IPeerParams) => {
       const call = me.call(peerId, stream, {
+        metadata: {
+          constraints: {
+            mandatory: {
+              OfferToReceiveAudio: true,
+              OfferToReceiveVideo: true,
+            },
+          },
+        },
         sdpTransform: (sdp: string) => {
           return sdp.replace(
             'a=fmtp:111 minptime=10;useinbandfec=1',
@@ -130,7 +138,14 @@ export function useVideo() {
     })
 
     me.on('call', (call) => {
-      call.answer(stream)
+      call.answer(stream, {
+        sdpTransform: (sdp: string) => {
+          return sdp.replace(
+            'a=fmtp:111 minptime=10;useinbandfec=1',
+            'a=fmtp:111 ptime=5;useinbandfec=1;stereo=1;maxplaybackrate=48000;maxaveragebitrat=128000;sprop-stereo=1',
+          )
+        },
+      })
 
       setSearching(false)
 
@@ -142,7 +157,7 @@ export function useVideo() {
         }
       })
     })
-  }, [me, stream, socket])
+  }, [me, stream, socket, skipped])
 
   return {
     myVideoRef,

@@ -1,5 +1,6 @@
 import { MediaQueryProvider } from '@/contexts/mediaQueryContext'
 import { MessageProvider } from '@/contexts/messageContext'
+import { StreamProvider } from '@/contexts/streamContext'
 
 import { ChatVideo } from '@/components/video/chat'
 import { Suspense } from 'react'
@@ -10,12 +11,14 @@ export default function VoiceChatRoom() {
   return (
     <MessageProvider>
       <MediaQueryProvider>
-        <main className="relative flex h-full flex-col justify-center gap-4 rounded-lg lg:flex-row lg:border lg:p-4">
-          <Suspense fallback={<VideoScreenLoading />}>
-            <VideoScreen />
-          </Suspense>
-          <ChatVideo />
-        </main>
+        <StreamProvider>
+          <main className="relative flex h-full flex-col justify-center gap-4 rounded-lg lg:flex-row lg:border lg:p-4">
+            <Suspense fallback={<VideoScreenLoading />}>
+              <VideoScreen />
+            </Suspense>
+            <ChatVideo />
+          </main>
+        </StreamProvider>
       </MediaQueryProvider>
     </MessageProvider>
   )

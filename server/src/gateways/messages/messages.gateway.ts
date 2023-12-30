@@ -12,7 +12,7 @@ import { RoomService } from '@/services/room/room.service'
 import { Logger } from '@nestjs/common'
 import { User } from '@/@types/user'
 
-@WebSocketGateway({ cors: process.env.WEBSITE_URL })
+@WebSocketGateway({ cors: '*' })
 export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
   private logger: Logger = new Logger('MessagesGateway')
   private totalUsers: number = 0

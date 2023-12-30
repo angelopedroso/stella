@@ -4,7 +4,10 @@ import { AppService } from './app.service'
 import { MessagesGateway } from './gateways/messages/messages.gateway'
 import { MongooseModule } from '@nestjs/mongoose'
 import { Room, RoomSchema } from './models'
+import { configDotenv } from 'dotenv'
 import { RoomService } from './services/room/room.service'
+
+configDotenv()
 
 @Module({
   imports: [

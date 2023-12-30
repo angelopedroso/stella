@@ -93,6 +93,17 @@ export function useChatMenu() {
       if (user.event === 'left') {
         setCheckedMic(false)
         setCheckedVideo(false)
+
+        setGuestOptions((prev) => {
+          return { ...prev, micStatus: false }
+        })
+
+        if (myStream) {
+          const tracks = myStream.getVideoTracks()
+          if (tracks.length > 0) {
+            tracks[0].enabled = true
+          }
+        }
       }
     })
 
@@ -100,7 +111,7 @@ export function useChatMenu() {
       socket?.off('video-menu-mic')
       socket?.off('video-menu-cam')
     }
-  }, [socket, toggleCamera])
+  }, [myStream, socket, toggleCamera])
 
   return {
     handleExitChat,

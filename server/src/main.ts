@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
+import { PeerServer } from 'peer'
 import { configDotenv } from 'dotenv'
 
 configDotenv()
@@ -8,7 +9,7 @@ async function bootstrap() {
   const websiteURL = process.env.WEBSITE_URL
 
   const app = await NestFactory.create(AppModule)
-
+  PeerServer({ port: 9001, path: '/peer' })
   app.enableCors({
     origin: websiteURL,
   })

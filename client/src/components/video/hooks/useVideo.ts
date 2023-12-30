@@ -109,14 +109,14 @@ export function useVideo() {
     setSearching(true)
 
     socket?.on('video-answer', ({ peerId }: IPeerParams) => {
-      const call = me.call(peerId, stream, {
-        metadata: {
-          constraints: {
-            mandatory: {
-              OfferToReceiveAudio: true,
-              OfferToReceiveVideo: true,
-            },
+      const options = {
+        constraints: {
+          mandatory: {
+            OfferToReceiveAudio: true,
+            OfferToReceiveVideo: true,
           },
+          offerToReceiveAudio: 1,
+          offerToReceiveVideo: 1,
         },
         sdpTransform: (sdp: string) => {
           return sdp.replace(
@@ -124,7 +124,9 @@ export function useVideo() {
             'a=fmtp:111 ptime=5;useinbandfec=1;stereo=1;maxplaybackrate=48000;maxaveragebitrat=128000;sprop-stereo=1',
           )
         },
-      })
+      }
+
+      const call = me.call(peerId, stream, options)
 
       setSearching(false)
 

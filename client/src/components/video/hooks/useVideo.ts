@@ -72,8 +72,6 @@ export function useVideo() {
 
         const peer = new PeerJS(socket.id, {
           host: peerURL,
-          port: peerPort,
-          path: '/peer',
         })
 
         setMe(peer)

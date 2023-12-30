@@ -1,16 +1,13 @@
 'use client'
 
-import Draggable from 'react-draggable'
-
 import { useVideo } from './hooks/useVideo'
-import { useChatMenu, useMediaQueryContext } from '@/hooks'
+import { useChatMenu } from '@/hooks'
 
 import { MenuUtils, MenuUtilsToggle } from '@/components/ui/menu-util'
 
 import { Loader2, Mic, MicOff, Video, VideoOff } from 'lucide-react'
 
 export function VideoScreen() {
-  const { isDesktop, position } = useMediaQueryContext()
   const { myVideoRef, guestVideoRef, isSearching } = useVideo()
   const {
     checkedMic,
@@ -21,13 +18,13 @@ export function VideoScreen() {
   } = useChatMenu()
 
   return (
-    <div className="relative flex h-full flex-col gap-4 md:h-72 md:flex-row-reverse md:justify-center lg:h-full lg:flex-col">
+    <div className="relative flex h-full flex-col gap-4 md:h-72 md:flex-row-reverse md:justify-center lg:h-full lg:max-w-[18.75rem] lg:flex-col">
       {!isSearching ? (
         <video
           autoPlay
           playsInline
           data-muted={guestOptions.micStatus}
-          className="w-full grow rounded-lg border object-cover data-[muted=true]:border-destructive"
+          className="w-full grow basis-1/2 rounded-lg border object-cover data-[muted=true]:border-destructive"
           ref={guestVideoRef}
           aria-label="Guest video cam"
           muted={guestOptions.micStatus}
@@ -35,22 +32,17 @@ export function VideoScreen() {
           Your browser does not support the video tag.
         </video>
       ) : (
-        <div className="flex w-full grow flex-col items-center justify-center rounded-lg border text-secondary">
+        <div className="flex w-full grow basis-1/2 flex-col items-center justify-center rounded-lg border text-secondary">
           <Loader2 className="h-1/2 w-1/2 animate-spin" />
         </div>
       )}
 
-      <Draggable
-        bounds="parent"
-        disabled={isDesktop}
-        position={position}
-        nodeRef={myVideoRef}
-      >
-        <div className="absolute right-2 top-2 h-32 w-24 grow overflow-hidden rounded-lg border md:static md:h-auto md:w-full">
+      <div className="absolute right-2 top-2 h-32 w-24 rounded-lg border md:static md:h-full md:w-full md:basis-1/2">
+        <div className="relative h-full w-full overflow-hidden">
           <video
             autoPlay
             playsInline
-            className="h-full object-cover"
+            className="h-full w-full object-cover"
             ref={myVideoRef}
             aria-label="Your video cam"
             muted
@@ -72,7 +64,7 @@ export function VideoScreen() {
             </MenuUtilsToggle>
           </MenuUtils>
         </div>
-      </Draggable>
+      </div>
     </div>
   )
 }

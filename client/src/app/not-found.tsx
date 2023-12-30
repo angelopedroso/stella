@@ -1,4 +1,4 @@
-import { ErrorIcon } from '@/assets/error-icon'
+import { ErrorIcon } from '@/components/animations/not-found/error-icon'
 import Link from 'next/link'
 
 export default function NotFound() {

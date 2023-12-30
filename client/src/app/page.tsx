@@ -1,4 +1,4 @@
-import { HomeIcon } from '@/assets/spoken-icon-home'
+import { HomeIcon } from '@/components/animations/home/spoken-icon-home'
 import { HomeForm } from '@/components/forms/home/home-form'
 import { HomeText } from '@/components/homeText'
 

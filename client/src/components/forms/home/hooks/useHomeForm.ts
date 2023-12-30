@@ -8,7 +8,7 @@ const languageSchema = z
   .object({
     learn: z.string().min(1, 'Please, choose a language to learn'),
     native: z.string().min(1, 'Please, choose your native language'),
-    chat: z.enum(['voice', 'text']),
+    type: z.enum(['voice', 'text']),
   })
   .refine((data) => data.learn !== data.native, {
     path: ['native'],
@@ -23,7 +23,7 @@ export function useLanguageForm() {
     defaultValues: {
       learn: '',
       native: '',
-      chat: 'text',
+      type: 'text',
     },
   })
 
@@ -34,7 +34,7 @@ export function useLanguageForm() {
   function handleFormSubmit(data: Language) {
     setUserConfig(data)
 
-    if (data.chat === 'text') {
+    if (data.type === 'text') {
       push('/chat')
     } else {
       push('/video')

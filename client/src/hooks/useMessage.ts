@@ -53,11 +53,7 @@ export function useMessage() {
     }
 
     // Emit when joined on a room by first time
-    socket?.emit('enter-chat-room', {
-      native: userConfig.native,
-      learn: userConfig.learn,
-      type: userConfig.chat,
-    })
+    socket?.emit('enter-chat-room', userConfig)
 
     socket?.on('chat-room-entered', handleChatRoomEntered)
     socket?.on('message', handleMessage)

@@ -98,11 +98,17 @@ export function useChatMenu() {
           return { ...prev, micStatus: false }
         })
 
-        if (myStream) {
-          const tracks = myStream.getVideoTracks()
-          if (tracks.length > 0) {
-            tracks[0].enabled = true
+        try {
+          if (myStream) {
+            const tracks = myStream?.getTracks()
+            const videoTrack = tracks.find((track) => track.kind === 'video')
+
+            if (videoTrack) {
+              videoTrack.enabled = true
+            }
           }
+        } catch (error) {
+          console.error("❌ - You haven't got a video cam")
         }
       }
     })

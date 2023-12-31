@@ -12,7 +12,7 @@ type IPeerParams = {
 }
 
 export function useVideo() {
-  const { socket, room, skipped } = useLanguageContext()
+  const { socket, room } = useLanguageContext()
   const { addGuestStream, addMyStream } = useStreamContext()
 
   const [me, setMe] = useState<Peer>()
@@ -92,7 +92,7 @@ export function useVideo() {
         }
       })
     }
-  }, [socket, skipped])
+  }, [socket])
 
   useEffect(() => {
     if (!me || !room || !isPermissionGranted || !stream) return
@@ -101,7 +101,7 @@ export function useVideo() {
       roomId: room.id,
       peerId: me?.id,
     } as IPeerParams)
-  }, [room, isPermissionGranted, stream, skipped])
+  }, [room, isPermissionGranted, stream])
 
   useEffect(() => {
     if (!me || !stream) return
@@ -128,14 +128,10 @@ export function useVideo() {
 
       const call = me.call(peerId, stream, options)
 
-      setSearching(false)
-
       call.on('stream', (guestStream) => {
-        if (guestVideoRef.current) {
-          guestVideoRef.current.srcObject = guestStream
-          setGuestStream(guestStream)
-          addGuestStream(guestStream)
-        }
+        setSearching(false)
+        setGuestStream(guestStream)
+        addGuestStream(guestStream)
       })
     })
 
@@ -149,17 +145,19 @@ export function useVideo() {
         },
       })
 
-      setSearching(false)
-
       call.on('stream', (guestStream) => {
-        if (guestVideoRef.current) {
-          guestVideoRef.current.srcObject = guestStream
-          setGuestStream(guestStream)
-          addGuestStream(guestStream)
-        }
+        setSearching(false)
+        setGuestStream(guestStream)
+        addGuestStream(guestStream)
       })
     })
-  }, [me, stream, socket, skipped])
+  }, [me, stream, socket, guestVideoRef])
+
+  useEffect(() => {
+    if (guestVideoRef.current && guestStream) {
+      guestVideoRef.current.srcObject = guestStream
+    }
+  }, [guestVideoRef, guestStream])
 
   return {
     myVideoRef,

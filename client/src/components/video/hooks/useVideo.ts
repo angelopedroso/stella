@@ -37,9 +37,9 @@ export function useVideo() {
       const constraints: MediaStreamConstraints = {
         audio: {
           autoGainControl: false,
-          channelCount: 2,
           echoCancellation: false,
           noiseSuppression: false,
+          channelCount: 2,
           sampleRate: 48000,
           sampleSize: 16,
         },
@@ -92,21 +92,19 @@ export function useVideo() {
         }
       })
     }
-  }, [socket])
+  }, [])
 
   useEffect(() => {
-    if (!me || !room || !isPermissionGranted || !stream) return
+    if (!me || !room || !isPermissionGranted) return
 
     socket?.emit('video-chat-join', {
       roomId: room.id,
       peerId: me?.id,
     } as IPeerParams)
-  }, [room, isPermissionGranted, stream])
+  }, [me, room, isPermissionGranted])
 
   useEffect(() => {
     if (!me || !stream) return
-
-    setSearching(true)
 
     socket?.on('video-answer', ({ peerId }: IPeerParams) => {
       const options = {
@@ -151,7 +149,11 @@ export function useVideo() {
         addGuestStream(guestStream)
       })
     })
-  }, [me, stream, socket, guestVideoRef])
+
+    return () => {
+      socket?.off('video-answer')
+    }
+  }, [me, stream])
 
   useEffect(() => {
     if (guestVideoRef.current && guestStream) {

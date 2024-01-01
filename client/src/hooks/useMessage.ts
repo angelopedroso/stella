@@ -8,7 +8,7 @@ export function useMessage() {
   const { userConfig, setRoom, setSocket, setSkipped, skipped } =
     useLanguageContext()
 
-  const socketURL = `${process.env.NEXT_PUBLIC_DATABASE_URL_PORT}`
+  const socketURL = `${process.env.NEXT_PUBLIC_DATABASE_URL}`
   const socket = useSocket(socketURL)
 
   const [messages, setMessages] = useState<Partial<Message[]>>([])

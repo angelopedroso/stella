@@ -25,7 +25,7 @@ export function useVideo() {
   const myVideoRef = useRef<HTMLVideoElement>(null)
   const guestVideoRef = useRef<HTMLVideoElement>(null)
 
-  const peerURL = `${process.env.NEXT_PUBLIC_DATABASE_URL}`
+  const peerURL = `${process.env.NEXT_PUBLIC_PEER_URL}`
   const peerPort = Number(process.env.NEXT_PUBLIC_PEER_PORT)
 
   const getStream = useCallback(async () => {

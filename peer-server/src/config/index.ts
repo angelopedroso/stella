@@ -7,6 +7,6 @@ export const peerConfig: Partial<IConfig> = {
  alive_timeout: 90000,
  port: 9000,
  corsOptions: {
-  origin: process.env.CORS_ORIGIN || true
+  origin: '*'
  }
 }

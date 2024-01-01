@@ -125,8 +125,10 @@ export function useVideo() {
       }
 
       const call = me.call(peerId, stream, options)
+      console.log('🚀 ~ file: useVideo.ts:128 ~ socket?.on ~ call:', call)
 
       call.on('stream', (guestStream) => {
+        console.log('stream call')
         setSearching(false)
         setGuestStream(guestStream)
         addGuestStream(guestStream)
@@ -143,7 +145,10 @@ export function useVideo() {
         },
       })
 
+      console.log('object')
+      
       call.on('stream', (guestStream) => {
+        console.log('stream answer')
         setSearching(false)
         setGuestStream(guestStream)
         addGuestStream(guestStream)
@@ -158,6 +163,7 @@ export function useVideo() {
   useEffect(() => {
     if (guestVideoRef.current && guestStream) {
       guestVideoRef.current.srcObject = guestStream
+      console.log('fgd')
     }
   }, [guestVideoRef, guestStream])
 

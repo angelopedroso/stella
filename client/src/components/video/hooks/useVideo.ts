@@ -92,7 +92,7 @@ export function useVideo() {
         }
       })
     }
-  }, [])
+  }, [socket])
 
   useEffect(() => {
     if (!me || !room || !isPermissionGranted) return

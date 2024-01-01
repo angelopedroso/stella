@@ -146,7 +146,7 @@ export function useVideo() {
       })
 
       console.log('object')
-      
+
       call.on('stream', (guestStream) => {
         console.log('stream answer')
         setSearching(false)

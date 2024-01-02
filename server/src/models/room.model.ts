@@ -12,7 +12,7 @@ export class Room {
   @Prop({ required: true, enum: ['waiting', 'call'] })
   status: string
 
-  @Prop({ required: true, enum: ['text', 'voice'] })
+  @Prop({ required: true, enum: ['chat', 'video'] })
   type: string
 
   @Prop({ required: true })

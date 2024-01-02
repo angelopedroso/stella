@@ -53,6 +53,10 @@ export class MessagesGateway implements OnGatewayDisconnect, OnGatewayInit {
         event: 'left',
       })
 
+      client.broadcast
+        .to(room._id.toString())
+        .emit('user-disconnected-videochat')
+
       if (room.totalUsers < 2) {
         await this.roomService.deleteRoom(room._id)
       } else {

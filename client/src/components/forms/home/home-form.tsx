@@ -78,7 +78,7 @@ export function HomeForm() {
             <div className="flex items-center justify-evenly">
               <Button
                 type="submit"
-                onClick={() => form.setValue('type', 'text')}
+                onClick={() => form.setValue('type', 'chat')}
                 form="lang"
                 variant="secondary"
                 className="flex h-32 w-32 flex-col justify-center gap-2 p-4"
@@ -89,7 +89,7 @@ export function HomeForm() {
               </Button>
               <Button
                 type="submit"
-                onClick={() => form.setValue('type', 'voice')}
+                onClick={() => form.setValue('type', 'video')}
                 form="lang"
                 className="flex h-32 w-32 flex-col justify-center gap-2 p-4"
                 aria-label="Button to choose voice chat."

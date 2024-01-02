@@ -2,7 +2,6 @@ import { useLanguageContext } from '@/hooks'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useStreamContext } from './useStreamContext'
-import { Message } from '@/@types/message'
 
 type GuestOptionsProps = {
   micStatus: boolean
@@ -11,7 +10,7 @@ type GuestOptionsProps = {
 
 export function useChatMenu() {
   const { socket, userConfig, setSkipped, room } = useLanguageContext()
-  const { guestStream, myStream } = useStreamContext()
+  const { guestStream, myStream, callSignal, hasVideo } = useStreamContext()
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -25,6 +24,9 @@ export function useChatMenu() {
   const { push } = useRouter()
 
   function handleExitChat() {
+    if (callSignal) {
+      callSignal.close()
+    }
     push('/')
   }
 
@@ -87,29 +89,26 @@ export function useChatMenu() {
         return { ...prev, micStatus: status }
       }),
     )
+
     socket?.on('video-menu-cam', toggleCamera)
 
-    socket?.on('users-changed', (user: Message) => {
-      if (user.event === 'left') {
-        setCheckedMic(false)
-        setCheckedVideo(false)
+    socket?.on('user-disconnected-videochat', () => {
+      setCheckedMic(false)
+      setCheckedVideo(false)
 
-        setGuestOptions((prev) => {
-          return { ...prev, micStatus: false }
-        })
+      setGuestOptions({ micStatus: false, camStatus: false })
 
-        try {
-          if (myStream) {
-            const tracks = myStream?.getTracks()
-            const videoTrack = tracks.find((track) => track.kind === 'video')
+      try {
+        if (myStream) {
+          const tracks = myStream?.getTracks()
+          const videoTrack = tracks.find((track) => track.kind === 'video')
 
-            if (videoTrack) {
-              videoTrack.enabled = true
-            }
+          if (videoTrack) {
+            videoTrack.enabled = true
           }
-        } catch (error) {
-          console.error("❌ - You haven't got a video cam")
         }
+      } catch (error) {
+        console.error("❌ - You haven't got a video cam")
       }
     })
 
@@ -129,5 +128,6 @@ export function useChatMenu() {
     checkedMic,
     checkedVideo,
     guestOptions,
+    hasVideo,
   }
 }

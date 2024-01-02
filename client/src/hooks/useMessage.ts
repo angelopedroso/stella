@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Message } from '@/@types/message'
 import { useLanguageContext, useSocket } from '@/hooks'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect, useRef, useCallback } from 'react'
 
 export function useMessage() {
@@ -16,6 +16,7 @@ export function useMessage() {
 
   const messageRef = useRef<HTMLDivElement>(null)
   const { push } = useRouter()
+  const path = usePathname()
 
   const handleChatRoomEntered = useCallback(
     (room: { id: string; isOwner: boolean }) => setRoom(room),
@@ -41,7 +42,7 @@ export function useMessage() {
 
   useEffect(() => {
     // If the user not defined basic settings
-    if (!userConfig.native) {
+    if (!userConfig.native || userConfig.type !== path.slice(1)) {
       push('/')
       return
     }
@@ -49,7 +50,9 @@ export function useMessage() {
     // If user clicked on skip button
     if (skipped) {
       setMessages([])
-      setSkipped(false)
+      if (userConfig.type === 'chat') {
+        setSkipped(false)
+      }
     }
 
     // Emit when joined on a room by first time

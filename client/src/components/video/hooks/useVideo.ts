@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLanguageContext } from '@/hooks'
 
-import Peer from 'peerjs'
+import Peer, { MediaConnection } from 'peerjs'
 import { useStreamContext } from '@/hooks/useStreamContext'
 
 type IPeerParams = {
@@ -12,13 +12,15 @@ type IPeerParams = {
 }
 
 export function useVideo() {
-  const { socket, room } = useLanguageContext()
-  const { addGuestStream, addMyStream } = useStreamContext()
+  const { socket, room, skipped, setSkipped } = useLanguageContext()
+  const { addGuestStream, addMyStream, addSignal, callSignal, setHasVideo } =
+    useStreamContext()
 
   const [me, setMe] = useState<Peer>()
+  const [stream, setStream] = useState<MediaStream>()
 
   const [guestStream, setGuestStream] = useState<MediaStream>()
-  const [stream, setStream] = useState<MediaStream>()
+
   const [isSearching, setSearching] = useState(true)
   const [isPermissionGranted, setPermissionGranted] = useState(false)
 
@@ -51,6 +53,7 @@ export function useVideo() {
       setStream(stream)
       addMyStream(stream)
       setPermissionGranted(true)
+      setHasVideo(!!hasVideo)
 
       if (myVideoRef.current) {
         myVideoRef.current.srcObject = stream
@@ -62,9 +65,11 @@ export function useVideo() {
     }
   }, [])
 
-  function removePeer() {
+  function removePeer(call?: MediaConnection) {
     setSearching(true)
-    guestStream?.getTracks().forEach((track) => track.stop())
+    if (call) {
+      call.close()
+    }
   }
 
   useEffect(() => {
@@ -85,12 +90,6 @@ export function useVideo() {
       if (typeof navigator !== 'undefined') {
         getStream()
       }
-
-      socket.on('users-changed', (data) => {
-        if (data.event === 'left') {
-          removePeer()
-        }
-      })
     }
   }, [socket])
 
@@ -124,13 +123,18 @@ export function useVideo() {
         },
       }
 
-      const call = me.call(peerId, stream, options)
+      try {
+        const call = me.call(peerId, stream, options)
 
-      call.on('stream', (guestStream) => {
-        setSearching(false)
-        setGuestStream(guestStream)
-        addGuestStream(guestStream)
-      })
+        call.on('stream', (guestStream) => {
+          setSearching(false)
+          addSignal(call)
+          setGuestStream(guestStream)
+          addGuestStream(guestStream)
+        })
+      } catch (error) {
+        console.log(error)
+      }
     })
 
     me.on('call', (call) => {
@@ -145,15 +149,27 @@ export function useVideo() {
 
       call.on('stream', (guestStream) => {
         setSearching(false)
+        addSignal(call)
         setGuestStream(guestStream)
         addGuestStream(guestStream)
       })
     })
+  }, [me, stream, socket])
+
+  useEffect(() => {
+    if (skipped) {
+      removePeer(callSignal)
+      setSkipped(false)
+    }
+
+    socket?.on('user-disconnected-videochat', () => {
+      removePeer(callSignal)
+    })
 
     return () => {
-      socket?.off('video-answer')
+      socket?.off('user-disconnected-videochat')
     }
-  }, [me, stream])
+  }, [skipped, callSignal, socket])
 
   useEffect(() => {
     if (guestVideoRef.current && guestStream) {

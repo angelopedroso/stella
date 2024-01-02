@@ -27,7 +27,7 @@ export interface VideoMenuProps {
 }
 
 export function VideoMenu({ context }: VideoMenuProps) {
-  const { checkedMic, checkedVideo, ...menu } = useChatMenu()
+  const { checkedMic, checkedVideo, hasVideo, ...menu } = useChatMenu()
 
   return (
     <>
@@ -50,6 +50,7 @@ export function VideoMenu({ context }: VideoMenuProps) {
         <MenuUtilsToggle
           aria-label="Video toggle button"
           onPressedChange={menu.handleToggleVideo}
+          disabled={!hasVideo}
         >
           {checkedVideo ? <VideoOff /> : <Video />}
         </MenuUtilsToggle>

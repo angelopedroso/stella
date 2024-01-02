@@ -15,6 +15,7 @@ export function VideoScreen() {
     checkedVideo,
     handleToggleVideo,
     guestOptions,
+    hasVideo,
   } = useChatMenu()
 
   return (
@@ -63,6 +64,7 @@ export function VideoScreen() {
               aria-label="Video toggle button"
               onPressedChange={handleToggleVideo}
               pressed={checkedVideo}
+              disabled={!hasVideo}
             >
               {checkedVideo ? <VideoOff /> : <Video />}
             </MenuUtilsToggle>

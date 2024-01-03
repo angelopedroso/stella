@@ -99,9 +99,10 @@ export function useChatMenu() {
       setGuestOptions({ micStatus: false, camStatus: false })
 
       try {
-        if (myStream) {
-          const tracks = myStream?.getTracks()
-          const videoTrack = tracks.find((track) => track.kind === 'video')
+        if (myStream && hasVideo) {
+          const videoTrack = myStream
+            ?.getTracks()
+            .find((track) => track.kind === 'video')
 
           if (videoTrack) {
             videoTrack.enabled = true
@@ -116,7 +117,7 @@ export function useChatMenu() {
       socket?.off('video-menu-mic')
       socket?.off('video-menu-cam')
     }
-  }, [myStream, socket, toggleCamera])
+  }, [myStream, toggleCamera])
 
   return {
     handleExitChat,

@@ -41,6 +41,7 @@ export function VideoMenu({ context }: VideoMenuProps) {
         <MenuUtilsToggle
           aria-label="Mic toggle button"
           onPressedChange={menu.handleToggleMic}
+          pressed={checkedMic}
         >
           {checkedMic ? <MicOff /> : <Mic />}
         </MenuUtilsToggle>
@@ -51,6 +52,7 @@ export function VideoMenu({ context }: VideoMenuProps) {
           aria-label="Video toggle button"
           onPressedChange={menu.handleToggleVideo}
           disabled={!hasVideo}
+          pressed={checkedVideo}
         >
           {checkedVideo ? <VideoOff /> : <Video />}
         </MenuUtilsToggle>

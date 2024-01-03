@@ -59,11 +59,14 @@ Follow the steps below to set up Stella on your local environment:
    yarn
    cd ../server
    yarn
+   cd ../peer-server
+   yarn
    ```
 
 3. **Configure Environment:**
    - For the client, create a `.env.local` file in the `client` directory, and base it on `.env.example` with necessary configurations.
    - For the server, create a `.env` file in the `server` directory, and base it on `.env.example` with the required settings.
+   - For the peer-server, create a `.env` file in the `peer-server` directory, and base it on `.env.example` with the required settings.
 
 4. **Start the Applications:**
    - Start the client:
@@ -77,6 +80,13 @@ Follow the steps below to set up Stella on your local environment:
 
      ```bash
      cd ../server
+     yarn start:dev
+     ```
+     
+   - Start the peer-server:
+
+     ```bash
+     cd ../peer-server
      yarn start:dev
      ```
 

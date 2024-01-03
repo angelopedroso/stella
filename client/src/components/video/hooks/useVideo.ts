@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLanguageContext } from '@/hooks'
 
-import Peer, { MediaConnection } from 'peerjs'
+import { MediaConnection } from 'peerjs'
 import { useStreamContext } from '@/hooks/useStreamContext'
+import { useVideoStream } from './useVideoStream'
+import { usePeer } from './usePeer'
 
 type IPeerParams = {
   peerId: string
@@ -13,99 +15,37 @@ type IPeerParams = {
 
 export function useVideo() {
   const { socket, room, skipped, setSkipped } = useLanguageContext()
-  const { addGuestStream, addMyStream, addSignal, callSignal, setHasVideo } =
+  const { addGuestStream, addSignal, callSignal, guestStream } =
     useStreamContext()
-
-  const [me, setMe] = useState<Peer>()
-  const [stream, setStream] = useState<MediaStream>()
-
-  const [guestStream, setGuestStream] = useState<MediaStream>()
-
-  const [isSearching, setSearching] = useState(true)
-  const [isPermissionGranted, setPermissionGranted] = useState(false)
 
   const myVideoRef = useRef<HTMLVideoElement>(null)
   const guestVideoRef = useRef<HTMLVideoElement>(null)
 
-  const peerURL = `${process.env.NEXT_PUBLIC_PEER_URL}`
-  const peerPort = Number(process.env.NEXT_PUBLIC_PEER_PORT)
+  const { stream, isPermissionGranted } = useVideoStream(myVideoRef)
+  const me = usePeer()
 
-  const getStream = useCallback(async () => {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices()
+  const [isSearching, setSearching] = useState(true)
 
-      const hasVideo = devices.find((device) => device.kind === 'videoinput')
-
-      const constraints: MediaStreamConstraints = {
-        audio: {
-          autoGainControl: false,
-          echoCancellation: false,
-          noiseSuppression: false,
-          channelCount: 2,
-          sampleRate: 48000,
-          sampleSize: 16,
-        },
-        video: !!hasVideo,
+  const removePeer = useCallback(
+    (call?: MediaConnection) => {
+      setSearching(true)
+      if (call) {
+        call.close()
       }
+    },
+    [setSearching],
+  )
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints)
-
-      setStream(stream)
-      addMyStream(stream)
-      setPermissionGranted(true)
-      setHasVideo(!!hasVideo)
-
-      if (myVideoRef.current) {
-        myVideoRef.current.srcObject = stream
-      }
-    } catch (error) {
-      if (error instanceof DOMException) {
-        console.error(error)
-      }
-    }
-  }, [])
-
-  function removePeer(call?: MediaConnection) {
-    setSearching(true)
-    if (call) {
-      call.close()
-    }
+  const handleStreamEvents = (call: MediaConnection) => {
+    call.on('stream', (guestStream) => {
+      setSearching(false)
+      addSignal(call)
+      addGuestStream(guestStream)
+    })
   }
 
-  useEffect(() => {
-    if (socket) {
-      const fn = async () => {
-        const PeerJS = (await import('peerjs')).default
-
-        const peer = new PeerJS(socket.id, {
-          host: peerURL,
-          port: peerPort,
-        })
-
-        setMe(peer)
-      }
-
-      fn()
-
-      if (typeof navigator !== 'undefined') {
-        getStream()
-      }
-    }
-  }, [socket])
-
-  useEffect(() => {
-    if (!me || !room || !isPermissionGranted) return
-
-    socket?.emit('video-chat-join', {
-      roomId: room.id,
-      peerId: me?.id,
-    } as IPeerParams)
-  }, [me, room, isPermissionGranted])
-
-  useEffect(() => {
-    if (!me || !stream) return
-
-    socket?.on('video-answer', ({ peerId }: IPeerParams) => {
+  const handleVideoAnswer = useCallback(
+    ({ peerId }: IPeerParams) => {
       const options = {
         constraints: {
           mandatory: {
@@ -124,18 +64,28 @@ export function useVideo() {
       }
 
       try {
-        const call = me.call(peerId, stream, options)
-
-        call.on('stream', (guestStream) => {
-          setSearching(false)
-          addSignal(call)
-          setGuestStream(guestStream)
-          addGuestStream(guestStream)
-        })
+        const call = me!.call(peerId, stream!, options)
+        handleStreamEvents(call)
       } catch (error) {
         console.log(error)
       }
-    })
+    },
+    [me, stream, handleStreamEvents],
+  )
+
+  useEffect(() => {
+    if (!me || !room || !isPermissionGranted) return
+
+    socket?.emit('video-chat-join', {
+      roomId: room.id,
+      peerId: me?.id,
+    } as IPeerParams)
+  }, [me, room, isPermissionGranted])
+
+  useEffect(() => {
+    if (!me || !stream) return
+
+    socket?.on('video-answer', handleVideoAnswer)
 
     me.on('call', (call) => {
       call.answer(stream, {
@@ -147,14 +97,9 @@ export function useVideo() {
         },
       })
 
-      call.on('stream', (guestStream) => {
-        setSearching(false)
-        addSignal(call)
-        setGuestStream(guestStream)
-        addGuestStream(guestStream)
-      })
+      handleStreamEvents(call)
     })
-  }, [me, stream, socket])
+  }, [me, stream, socket, handleVideoAnswer])
 
   useEffect(() => {
     if (skipped) {
@@ -162,14 +107,16 @@ export function useVideo() {
       setSkipped(false)
     }
 
-    socket?.on('user-disconnected-videochat', () => {
+    const handleUserDisconnected = () => {
       removePeer(callSignal)
-    })
+    }
+
+    socket?.on('user-disconnected-videochat', handleUserDisconnected)
 
     return () => {
-      socket?.off('user-disconnected-videochat')
+      socket?.off('user-disconnected-videochat', handleUserDisconnected)
     }
-  }, [skipped, callSignal, socket])
+  }, [skipped, callSignal, removePeer])
 
   useEffect(() => {
     if (guestVideoRef.current && guestStream) {

@@ -7,10 +7,7 @@
 
 Welcome to Stella, your chat platform that makes communication in different languages easy and efficient. Stella allows text messages and video calls, providing an integrated and user-friendly chat experience.
 
-<p align="center">
-  <img src="https://i.ibb.co/dQPjzBn/image.png" alt="Stella homepage" width="700" height="340" style="margin-bottom: '4px';">
-  <img src="https://i.ibb.co/Wt6R4D1/image.png" alt="Stella video chat page" width="700" height="340">
-</p>
+![Stella homepage](https://i.ibb.co/dQPjzBn/image.png "Stella Homepage")
 
 ## Key Features
 
